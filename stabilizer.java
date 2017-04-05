@@ -1,6 +1,10 @@
-public class stabilizer{
+public class stabilizer extends Thread{
 
 
+	@Override
+	public void run(){
 
+
+	}
 
 }
