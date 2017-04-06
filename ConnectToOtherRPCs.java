@@ -35,11 +35,12 @@ public class ConnectToOtherRPCs implements Runnable
                     {
                         Registry client_sock = LocateRegistry.getRegistry(ip_addrs.get(i), port_num);
                         list_of_client_rpcs[i] = (RPCFunctions) client_sock.lookup("RPCFunctions");
-                        ip_connected_clients[i] = true;
                         System.out.println("Connected to " + ip_addrs.get(i));
                         String result = list_of_client_rpcs[i].get(69, "pls work");
 
-                        System.out.println("Return from first call is: " + result);                    }
+                        System.out.println("Return from first call is: " + result);
+                        ip_connected_clients[i] = true;
+                    }
                     catch (Exception e)
                     {
                         // System.err.println("Client exception: " + e.toString());
