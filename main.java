@@ -1,4 +1,17 @@
-public class main{
+package example.hello;
+
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
+public class main implements RPCFunctions{
+
+    public main() {}
+
+    // implement header functions in here
+    
+    public
 
 
 	
