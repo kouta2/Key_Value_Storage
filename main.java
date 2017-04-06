@@ -18,7 +18,7 @@ public class main implements RPCFunctions {
         // return found or not found in local machine and send it to proper person
         System.out.println("GET METHOD OF PROCESS ID: " + PROCESS_NUM);
         System.out.println("key is " + key);
-        return null;
+        return "Process " + PROCESS_NUM;
     }
 
     public String set(int pid, String key, String value)
@@ -69,11 +69,13 @@ public class main implements RPCFunctions {
         Scanner scan = new Scanner(System.in);
         while(true)
         {
+            System.out.println("RPCFunctions list: " + list_of_client_rpcs[0].toString());
             String cmd = scan.nextLine();
             System.out.println("Locally commannd is: " + cmd);
             try
             {
-                list_of_client_rpcs[1].get(1, cmd);
+                String result = list_of_client_rpcs[0].get(1, cmd);
+                System.out.println("return was: " + result);
             }
             catch (Exception e) {}
         }

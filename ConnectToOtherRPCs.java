@@ -17,12 +17,14 @@ public class ConnectToOtherRPCs implements Runnable
     public ConnectToOtherRPCs(int p_num, RPCFunctions client_rpcs [], int process)
     {
         ip_addrs.remove(process - 1);
+        System.out.println(ip_addrs.toString());
         port_num = p_num;
         list_of_client_rpcs = client_rpcs;
     }
 
     public void run()
     {
+        System.out.println(ip_addrs.size());
         // in the future, we should put this thread to sleep when there are no more clients to connect to and have the failure detector class wake us up when it detects a failure
         while(true)
         {
@@ -36,7 +38,10 @@ public class ConnectToOtherRPCs implements Runnable
                         list_of_client_rpcs[i] = (RPCFunctions) client_sock.lookup("RPCFunctions");
                         ip_connected_clients[i] = true;
                         System.out.println("Connected to " + ip_addrs.get(i));
-                    }
+                        System.out.println("Array in Connect is : " + list_of_client_rpcs[i]);
+                        String result = list_of_client_rpcs[i].get(69, "pls work");
+
+                        System.out.println("Return from first call is: " + result);                    }
                     catch (Exception e)
                     {
                         // System.err.println("Client exception: " + e.toString());

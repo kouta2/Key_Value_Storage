@@ -19,6 +19,7 @@ public class AcceptConnections implements Runnable
     {
         try
         {
+            System.out.println("Port num in Accept is: " + port_num);
             Registry registry = LocateRegistry.getRegistry(port_num);
             RPCFunctions stub = (RPCFunctions) UnicastRemoteObject.exportObject(new main(), 0);
             registry.bind("RPCFunctions", stub);
@@ -26,8 +27,8 @@ public class AcceptConnections implements Runnable
         }
         catch (Exception e)
         {
-            // System.err.println("Server exception: " + e.toString());
-            // e.printStackTrace();
+            System.err.println("Server exception: " + e.toString());
+            e.printStackTrace();
         }
     }
 }
