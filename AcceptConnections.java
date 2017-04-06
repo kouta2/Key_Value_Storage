@@ -26,8 +26,8 @@ public class AcceptConnections implements Runnable
         }
         catch (Exception e)
         {
-            System.err.println("Server exception: " + e.toString());
-            e.printStackTrace();
+            // System.err.println("Server exception: " + e.toString());
+            // e.printStackTrace();
         }
     }
 }

@@ -14,7 +14,7 @@ public class ConnectToOtherRPCs implements Runnable
     RPCFunctions list_of_client_rpcs [];
     public ConnectToOtherRPCs(int p_num, RPCFunctions[] client_rpcs, int process)
     {
-        ip_addrs = ArrayUtils.removeElement(ip_addrs, ip_addrs[process - 1]);
+        // ip_addrs = ArrayUtils.removeElement(ip_addrs, ip_addrs[process - 1]);
         port_num = p_num;
         list_of_client_rpcs = client_rpcs;
     }
@@ -31,13 +31,13 @@ public class ConnectToOtherRPCs implements Runnable
                     try
                     {
                         Registry client_sock = LocateRegistry.getRegistry(ip_addrs[i], port_num);
-                        list_of_client_rpcs[i] = (RPCFunctions) registry.lookup("RPCFunctions");
+                        list_of_client_rpcs[i] = (RPCFunctions) client_sock.lookup("RPCFunctions");
                         ip_connected_clients[i] = true;
                     }
                     catch (Exception e)
                     {
-                        System.err.println("Client exception: " + e.toString());
-                        e.printStackTrace();
+                        // System.err.println("Client exception: " + e.toString());
+                        // e.printStackTrace();
                     }
                 }
             }
