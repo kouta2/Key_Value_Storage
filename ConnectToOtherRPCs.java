@@ -17,7 +17,6 @@ public class ConnectToOtherRPCs implements Runnable
     public ConnectToOtherRPCs(int p_num, RPCFunctions client_rpcs [], int process)
     {
         ip_addrs.remove(process - 1);
-        System.out.println(ip_addrs.toString());
         port_num = p_num;
         list_of_client_rpcs = client_rpcs;
     }
