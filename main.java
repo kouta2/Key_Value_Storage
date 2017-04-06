@@ -3,6 +3,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.net.InetAddress;
+import java.util.Scanner;
 
 public class main implements RPCFunctions {
 
@@ -14,6 +15,8 @@ public class main implements RPCFunctions {
     public String get(int pid, String key)
     {
         // return found or not found in local machine and send it to proper person
+        System.out.println("GET METHOD OF PROCESS ID: " + PROCESS_NUM);
+        System.out.println("key is " + key);
         return null;
     }
 
@@ -21,6 +24,8 @@ public class main implements RPCFunctions {
     {
         // set/update key-value pair locally
         // let proper process know it was a success
+        System.out.println("SET METHOD OF PROCESS ID: " + PROCESS_NUM);
+        System.out.println("key is " + key + " and value is " + value);
         return null;
     }
 
@@ -60,6 +65,12 @@ public class main implements RPCFunctions {
 
         // need a thread to listen to stdin and print to stdout
             // main thread
+        Scanner scan = new Scanner(System.in);
+        while(true)
+        {
+            String cmd = scan.nextLine()
+            list_of_client_rpcs[1].get(1, cmd);
+        }
 	}
 
 }
