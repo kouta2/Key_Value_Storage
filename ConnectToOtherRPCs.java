@@ -38,7 +38,6 @@ public class ConnectToOtherRPCs implements Runnable
                         list_of_client_rpcs[i] = (RPCFunctions) client_sock.lookup("RPCFunctions");
                         ip_connected_clients[i] = true;
                         System.out.println("Connected to " + ip_addrs.get(i));
-                        System.out.println("Array in Connect is : " + list_of_client_rpcs[i]);
                         String result = list_of_client_rpcs[i].get(69, "pls work");
 
                         System.out.println("Return from first call is: " + result);                    }

@@ -69,9 +69,9 @@ public class main implements RPCFunctions {
         Scanner scan = new Scanner(System.in);
         while(true)
         {
-            System.out.println("RPCFunctions list: " + list_of_client_rpcs[0].toString());
             String cmd = scan.nextLine();
             System.out.println("Locally commannd is: " + cmd);
+            System.out.println("RPCFunctions list: " + list_of_client_rpcs[0].toString());
             try
             {
                 String result = list_of_client_rpcs[0].get(1, cmd);
