@@ -100,8 +100,8 @@ public class main implements RPCFunctions {
                 
 
 				String input []  = cmd.split(" ");	
-	
-				if (input[0] == "SET"){
+				System.out.println(input[0]); 
+				if (input[0].equals("SET")){
                     try {
 				        int pid = Executor.route(input[1]); 
                 	    RPCFunctions r = rpc_connect.get_connection(pid);
@@ -111,7 +111,7 @@ public class main implements RPCFunctions {
                     catch (Exception e) {
 
                     }
-				}else if (input[0] == "GET"){
+				}else if (input[0].equals("GET")){
                     try {
                         int pid = Executor.route(input[1]); 
                         RPCFunctions r = rpc_connect.get_connection(pid);
