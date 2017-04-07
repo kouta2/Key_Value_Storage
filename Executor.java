@@ -99,7 +99,7 @@ public class Executor extends Thread{
  * return: VM that the key belongs to 
  * */
 
-	private static long route(String key){
+	private static int route(String key){
 		/*
  *		From my notes on routing for Chord:
  *			At each step attempt to minimize your clockwise distance to the key
