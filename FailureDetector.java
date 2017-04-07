@@ -16,25 +16,52 @@ public class FailureDetector extends Thread{
         pid = PROCESS_NUM;
     }
 
+    private void notify(ConnectToOtherRPCs rpc_connect, boolean connect, int pid, int new_connection_id)
+    {
+        RPCFunctions r;
+        try
+        {
+            r = rpc_connect.get_connection(pid);
+            if(connect)
+                r.notify_connection(new_connection_id);
+            else
+                r.notify_failure(new_connection_id);
+        }
+        catch (Exception e) {}
+            
+    }
+
 	@Override
 	public void run()
     {
+        ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(port_num);
         while(true)
         {
             for(int i = 1; i < 11; i++)
             {
-                ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(port_num);
                 if(i != pid)
                 {
                     try
                     {
                         RPCFunctions r = rpc_connect.get_connection(i);
                         r.heartbeat();
-                        alive[i - 1] = true;
+                        if(alive[i - 1] == false)
+                        {
+                            alive[i - 1] = true;
+                            for(int j = 1; j < 11; j++)
+                                if(j != pid && j != i)
+                                    notify(rpc_connect, true, j, i);
+                        }
                     }
                     catch (Exception e)
                     {
-                        alive[i - 1] = false;
+                        if(alive[i - 1] == true)
+                        {
+                            alive[i - 1] = false;
+                            for(int j = 1; j < 11; j++)
+                                if(j != pid && j != i)
+                                    notify(rpc_connect, false, j, i);
+                        }
                     }
                 }
             }

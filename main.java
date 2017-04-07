@@ -46,12 +46,20 @@ public class main implements RPCFunctions {
         return true;
     }
 
+    public void notify_failure(int failed_pid)
+    {
+        LIVE_NODES[failed_id - 1] = false;
+    }
+
+    public void notify_connection(int connected_pid)
+    {
+        LIVE_NODES[connected_pid - 1] = true;
+    }
+
 
 	public static void main(String [] args)
     {
 		KV = new HashMap <String,String>();
-        
-
 		try
         {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));

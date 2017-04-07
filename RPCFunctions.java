@@ -13,5 +13,9 @@ public interface RPCFunctions extends Remote
     // String owners(String key) throws RemoteException;
     
     boolean heartbeat() throws RemoteException;
+
+    void notify_failure(int failed_id) throws RemoteException;
+
+    void notify_connection(int connected_id) throws RemoteException;
 }
 
