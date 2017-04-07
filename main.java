@@ -56,8 +56,8 @@ public class main implements RPCFunctions {
 
         // need a thread to try and connect to other processes
             // connect_to_other_rpcs
-        Thread connect = new Thread(new ConnectToOtherRPCs(port_num, list_of_client_rpcs, PROCESS_NUM));
-        connect.start();
+        // Thread connect = new Thread(new ConnectToOtherRPCs(port_num, list_of_client_rpcs, PROCESS_NUM));
+        // connect.start();
 
         // need a thread to accept connections to our RPC functions
             // accept_client_connections();
@@ -67,17 +67,22 @@ public class main implements RPCFunctions {
         // need a thread to listen to stdin and print to stdout
             // main thread
         Scanner scan = new Scanner(System.in);
+        ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(port_num, list_of_client_rpcs, PROCESS_NUM);
         while(true)
         {
             String cmd = scan.nextLine();
             System.out.println("Locally commannd is: " + cmd);
-            System.out.println("RPCFunctions list: " + list_of_client_rpcs[0].toString());
+            // System.out.println("RPCFunctions list: " + list_of_client_rpcs[0].toString());
             try
             {
-                String result = list_of_client_rpcs[0].get(1, cmd);
+                RPCFunctions rpc = rpc_connect.get_connection(1);
+                String result = rpc.get(0, cmd);
                 System.out.println("return was: " + result);
             }
-            catch (Exception e) {}
+            catch (Exception e) 
+            {
+                System.out.println("Unable to call rpc");
+            }
         }
 	}
 

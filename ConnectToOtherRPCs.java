@@ -7,7 +7,7 @@ import java.util.Arrays;
  * attempts to connect to other processes to use their RPCs
  *
  */
-public class ConnectToOtherRPCs implements Runnable
+public class ConnectToOtherRPCs
 {
     
     boolean ip_connected_clients[] = {false, false, false, false, false, false, false, false, false, false};
@@ -21,6 +21,21 @@ public class ConnectToOtherRPCs implements Runnable
         list_of_client_rpcs = client_rpcs;
     }
 
+    public RPCFunctions get_connection(int process)
+    {
+        try
+        {
+            Registry client_sock = LocateRegistry.getRegistry(ip_addrs.get(process - 1), port_num);
+            RPCFunctions stub = (RPCFunctions) client_sock.lookup("RPCFunctions");
+            return stub;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    /*
     public void run()
     {
         System.out.println(ip_addrs.size());
@@ -50,4 +65,5 @@ public class ConnectToOtherRPCs implements Runnable
             }
         }
     }
+    */
 }
