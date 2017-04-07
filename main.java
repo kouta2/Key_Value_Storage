@@ -96,6 +96,22 @@ public class main implements RPCFunctions {
             	// RPCFunction r = rpc_connect.getConnection(PROCESS_NUM);
             	//TODO: handle replication	
 
+				ArrayList<String> args = line.split(" ");	
+	
+				if (args[0] == "SET"){
+					RPCFunction r = rpc.connect.getConnection(pid); 
+
+
+
+				}else if (args[0] == "GET"){
+
+
+
+					r.get(args[1]); 
+				}else{
+					System.err.println("Operation not supported");
+				}
+
 			}
             catch (Exception e) 
             {
@@ -104,3 +120,11 @@ public class main implements RPCFunctions {
         }
 	}
 }
+
+
+
+
+
+
+
+
