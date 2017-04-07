@@ -26,11 +26,13 @@ public class ConnectToOtherRPCs
         try
         {
             Registry client_sock = LocateRegistry.getRegistry(ip_addrs.get(process - 1), port_num);
+            System.out.println("Do I get here?");
             RPCFunctions stub = (RPCFunctions) client_sock.lookup("RPCFunctions");
             return stub;
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             return null;
         }
     }

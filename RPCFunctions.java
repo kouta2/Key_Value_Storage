@@ -1,7 +1,8 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface RPCFunctions extends Remote {
+public interface RPCFunctions extends Remote 
+{
     // String sayHello() throws RemoteException;
 
     // Add RPC function headers hear

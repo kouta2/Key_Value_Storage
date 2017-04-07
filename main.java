@@ -75,13 +75,14 @@ public class main implements RPCFunctions {
             // System.out.println("RPCFunctions list: " + list_of_client_rpcs[0].toString());
             try
             {
-                RPCFunctions rpc = rpc_connect.get_connection(1);
+                RPCFunctions rpc = rpc_connect.get_connection(2);
                 String result = rpc.get(0, cmd);
+                System.out.println("hi");
                 System.out.println("return was: " + result);
             }
             catch (Exception e) 
             {
-                System.out.println("Unable to call rpc");
+                e.printStackTrace();
             }
         }
 	}
