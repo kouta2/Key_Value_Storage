@@ -5,6 +5,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.net.InetAddress;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.HashMap; 
 
 public class main implements RPCFunctions {
 
@@ -30,9 +31,11 @@ public class main implements RPCFunctions {
         return null;
     }
 
+	//Array that holds the chord ids for each machine
 	static long [] IDS = {0L,429496729L,858993459L,1288490188L,1717986918L,2147483648L,2576980377L,3006477107L,3435973836L,3865470566L};
- 	static long ID = IDS[0];
-
+	static boolean [] LIVE_NODES = [false,false,false,false,false,false,false,false,false,false]; 
+	static HashMap <String, String> KV;			
+	
     static RPCFunctions list_of_client_rpcs [] = new RPCFunctions[10]; // list of RPCs to communicate with other machines
     static int port_num = 2001;
 
@@ -40,6 +43,7 @@ public class main implements RPCFunctions {
 
 	public static void main(String [] args)
     {
+		KV = new Hashmap <String,String>();
         try
         {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));

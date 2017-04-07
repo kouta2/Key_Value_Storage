@@ -16,7 +16,7 @@ public class Executor extends Thread{
 
 	/*
  *
- *  function to calculate clockwise mod 2^32 distance from a->b
+ *  helper fxn to calculate clockwise mod 2^32 distance from a->b
  *  */
 	private static long cw_distance(long a, long b){
 		if (b >= a){
@@ -27,8 +27,18 @@ public class Executor extends Thread{
 
 	}
 
+	private static String get(String key){
+
+	}
+
+	private static String set(String key, String val){
 
 
+	}
+
+
+	
+	
 
 
 	/*
@@ -61,9 +71,10 @@ public class Executor extends Thread{
 			
 	
 		}else if (args.get(0).equals("OWNERS")){
-			
+			//need to find the owners of this key
+						
 		}else if (args.get(0).equals("BATCH")){
-
+			//need to execute a batch command
 		}else{
 			System.err.println("ERROR: Unsupported Command");	
 		}
