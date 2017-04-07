@@ -17,17 +17,13 @@ public class main implements RPCFunctions {
     public String get(int pid, String key)
     {
         // return found or not found in local machine and send it to proper person
-        System.out.println("GET METHOD OF PROCESS ID: " + PROCESS_NUM);
-        System.out.println("key is " + key);
-        return "Process " + PROCESS_NUM;
+        return null;
     }
 
     public String set(int pid, String key, String value)
     {
         // set/update key-value pair locally
         // let proper process know it was a success
-        System.out.println("SET METHOD OF PROCESS ID: " + PROCESS_NUM);
-        System.out.println("key is " + key + " and value is " + value);
         return null;
     }
 
@@ -49,9 +45,12 @@ public class main implements RPCFunctions {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));
         }
         catch (Exception e) {}
+
+        // need a thread to handle new connections
+
+        // failure detector 
         
         // need a thread to accept connections to our RPC functions
-            // accept_client_connections();
         Thread accept = new Thread(new AcceptConnections(port_num));
         accept.start();
 
@@ -60,13 +59,11 @@ public class main implements RPCFunctions {
         while(true)
         {
             String cmd = scan.nextLine();
-            System.out.println("Locally commannd is: " + cmd);
-            // System.out.println("RPCFunctions list: " + list_of_client_rpcs[0].toString());
             try
             {
-                RPCFunctions rpc = rpc_connect.get_connection(2);
-                String result = rpc.get(0, cmd);
-                System.out.println("return was: " + result);
+                // find out which process handles this
+                // create rpc connection
+                // RPCFunction r = rpc_connect.getConnection(pid)
             }
             catch (Exception e) 
             {
