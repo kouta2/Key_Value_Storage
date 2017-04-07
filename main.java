@@ -14,17 +14,21 @@ public class main implements RPCFunctions {
 
     // implement header functions in here for RPC
     
-    public String get(int pid, String key)
+    public String get(String key)
     {
         // return found or not found in local machine and send it to proper person
-        return null;
+    	
+	    String value = KV.get(key);
+		if (value != null) return "Found: " + value;
+		return "Not found"; 
+
     }
 
-    public String set(int pid, String key, String value)
+    public String set(String key, String value)
     {
         // set/update key-value pair locally
-        // let proper process know it was a success
-        return null;
+       	KV.set(key, value); 
+		return "SET OK";
     }
 
 	//Array that holds the chord ids for each machine
@@ -40,7 +44,9 @@ public class main implements RPCFunctions {
 	public static void main(String [] args)
     {
 		KV = new Hashmap <String,String>();
-        try
+        
+
+		try
         {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));
         }
@@ -63,8 +69,10 @@ public class main implements RPCFunctions {
             {
                 // find out which process handles this
                 // create rpc connection
-                // RPCFunction r = rpc_connect.getConnection(pid)
-            }
+            	RPCFunction r = rpc_connect.getConnection(pid)
+            	//TODO: handle replication	
+
+			}
             catch (Exception e) 
             {
                 e.printStackTrace();
