@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap; 
 import java.util.Map; 
 import java.util.Iterator;
+import java.util.Arrays;
  
 public class main implements RPCFunctions {
 
@@ -47,7 +48,7 @@ public class main implements RPCFunctions {
     	while (it.hasNext()) {
         	Map.Entry pair = (Map.Entry)it.next();
        		System.out.println(pair.getKey());
-       		it.remove(); // avoids a ConcurrentModificationException
+       		//it.remove(); // avoids a ConcurrentModificationException
     	}		
 	}
 
@@ -95,19 +96,31 @@ public class main implements RPCFunctions {
                 // create rpc connection
             	// RPCFunction r = rpc_connect.getConnection(PROCESS_NUM);
             	//TODO: handle replication	
+            	
+                
 
-				ArrayList<String> args = line.split(" ");	
+				String input []  = cmd.split(" ");	
 	
-				if (args[0] == "SET"){
-					RPCFunction r = rpc.connect.getConnection(pid); 
+				if (input[0] == "SET"){
+                    try {
+				        int pid = Executor.route(input[1]); 
+                	    RPCFunctions r = rpc_connect.getConnection(pid);
+                        String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
+                        System.out.println(result);
+                    }
+                    catch (Exception e) {
 
+                    }
+				}else if (input[0] == "GET"){
+                    try {
+                        int pid = Executor.route(input[1]); 
+                        RPCFunctions r = rpc_connect.getConnection(pid);
+					    String result = r.get(input[1]);
+                        System.out.println(result);
+                    }
+                    catch (Exception e) {
 
-
-				}else if (args[0] == "GET"){
-
-
-
-					r.get(args[1]); 
+                    }
 				}else{
 					System.err.println("Operation not supported");
 				}
