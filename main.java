@@ -104,7 +104,7 @@ public class main implements RPCFunctions {
 				if (input[0] == "SET"){
                     try {
 				        int pid = Executor.route(input[1]); 
-                	    RPCFunctions r = rpc_connect.getConnection(pid);
+                	    RPCFunctions r = rpc_connect.get_connection(pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                         System.out.println(result);
                     }
@@ -114,7 +114,7 @@ public class main implements RPCFunctions {
 				}else if (input[0] == "GET"){
                     try {
                         int pid = Executor.route(input[1]); 
-                        RPCFunctions r = rpc_connect.getConnection(pid);
+                        RPCFunctions r = rpc_connect.get_connection(pid);
 					    String result = r.get(input[1]);
                         System.out.println(result);
                     }
