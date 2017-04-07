@@ -6,11 +6,11 @@ import java.rmi.server.UnicastRemoteObject;
  * handles the client connections to us to use our RPC calls
  * 
  */
-public class AcceptConnections implements Runnable
+public class AcceptRPCConnections implements Runnable
 {
     int port_num;
 
-    public AcceptConnections(int p_num)
+    public AcceptRPCConnections(int p_num)
     {
         port_num = p_num;
     }    

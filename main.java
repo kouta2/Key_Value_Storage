@@ -51,7 +51,7 @@ public class main implements RPCFunctions {
         // failure detector 
         
         // need a thread to accept connections to our RPC functions
-        Thread accept = new Thread(new AcceptConnections(port_num));
+        Thread accept = new Thread(new AcceptRPCConnections(port_num));
         accept.start();
 
         Scanner scan = new Scanner(System.in);
