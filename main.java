@@ -6,7 +6,9 @@ import java.net.InetAddress;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap; 
-
+import java.util.Map; 
+import java.util.Iterator;
+ 
 public class main implements RPCFunctions {
 
 	//Array that holds the chord ids for each machine
@@ -20,7 +22,6 @@ public class main implements RPCFunctions {
     static int PROCESS_NUM;
 
     public main() {}
-
 
     // implement header functions in here for RPC
     
@@ -41,6 +42,15 @@ public class main implements RPCFunctions {
 		return "SET OK";
     }
 
+	public void list_local(){
+		Iterator it = KV.entrySet().iterator();
+    	while (it.hasNext()) {
+        	Map.Entry pair = (Map.Entry)it.next();
+       		System.out.println(pair.getKey());
+       		it.remove(); // avoids a ConcurrentModificationException
+    	}		
+	}
+
     public boolean heartbeat()
     {
         return true;
@@ -48,7 +58,7 @@ public class main implements RPCFunctions {
 
     public void notify_failure(int failed_pid)
     {
-        LIVE_NODES[failed_id - 1] = false;
+        LIVE_NODES[failed_pid - 1] = false;
     }
 
     public void notify_connection(int connected_pid)
