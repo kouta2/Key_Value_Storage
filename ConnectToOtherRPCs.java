@@ -16,7 +16,6 @@ public class ConnectToOtherRPCs
     RPCFunctions list_of_client_rpcs [];
     public ConnectToOtherRPCs(int p_num, RPCFunctions client_rpcs [], int process)
     {
-        ip_addrs.remove(process - 1);
         port_num = p_num;
         list_of_client_rpcs = client_rpcs;
     }
@@ -26,7 +25,6 @@ public class ConnectToOtherRPCs
         try
         {
             Registry client_sock = LocateRegistry.getRegistry(ip_addrs.get(process - 1), port_num);
-            System.out.println("Do I get here?");
             RPCFunctions stub = (RPCFunctions) client_sock.lookup("RPCFunctions");
             return stub;
         }
