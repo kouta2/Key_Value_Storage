@@ -47,6 +47,7 @@ public class FailureDetector extends Thread{
                         r.heartbeat();
                         if(alive[i - 1] == false)
                         {
+                            System.out.println("Process id: " + i + " connected");
                             alive[i - 1] = true;
                             for(int j = 1; j < 11; j++)
                                 if(j != pid && j != i)
@@ -57,6 +58,7 @@ public class FailureDetector extends Thread{
                     {
                         if(alive[i - 1] == true)
                         {
+                            System.out.println("Process id: " + i + " failed");
                             alive[i - 1] = false;
                             for(int j = 1; j < 11; j++)
                                 if(j != pid && j != i)
