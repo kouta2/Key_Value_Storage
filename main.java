@@ -45,27 +45,12 @@ public class main implements RPCFunctions {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));
         }
         catch (Exception e) {}
-
-        // need a failure detector thread
-            // Thread failure = new Thread(new FailureDetector());
-            // failure.start();
         
-        // need a stabilize thread
-            // Thread stabilizer = new Thread(new Stabilizer());
-            // stabilizer.start();
-
-        // need a thread to try and connect to other processes
-            // connect_to_other_rpcs
-        // Thread connect = new Thread(new ConnectToOtherRPCs(port_num, list_of_client_rpcs, PROCESS_NUM));
-        // connect.start();
-
         // need a thread to accept connections to our RPC functions
             // accept_client_connections();
         Thread accept = new Thread(new AcceptConnections(port_num));
         accept.start();
 
-        // need a thread to listen to stdin and print to stdout
-            // main thread
         Scanner scan = new Scanner(System.in);
         ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(port_num, list_of_client_rpcs, PROCESS_NUM);
         while(true)
@@ -77,7 +62,6 @@ public class main implements RPCFunctions {
             {
                 RPCFunctions rpc = rpc_connect.get_connection(2);
                 String result = rpc.get(0, cmd);
-                System.out.println("hi");
                 System.out.println("return was: " + result);
             }
             catch (Exception e) 
@@ -86,5 +70,4 @@ public class main implements RPCFunctions {
             }
         }
 	}
-
 }
