@@ -27,6 +27,7 @@ public class Executor extends Thread{
 
 	}
 
+/*
 	private static String get(String key){
 
 	}
@@ -35,7 +36,7 @@ public class Executor extends Thread{
 
 
 	}
-
+*/
 
 	
 	
@@ -128,7 +129,7 @@ public class Executor extends Thread{
 		//done, k is that number!
 
 		
-		long curr_node = IDS[3]; //starting point (hard coded for now)
+		long curr_node = IDS[main.PROCESS_NUM - 1]; //starting point 
 		boolean done = false;
 		long found_id = 0; 	
 		while (!done){
@@ -154,9 +155,15 @@ public class Executor extends Thread{
 
 		}
 
-	
+		int index = 0; 
+		for (int i = 0; i < 10; i ++){
+			if (IDS[i] == found_id){
+				index = i + 1;
+				break; 
+			}
+		}	
 		System.out.println(found_id);
-		return found_id;
+		return index; 
 	}
 
 
