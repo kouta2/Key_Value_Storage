@@ -125,63 +125,63 @@ public class Executor extends Thread{
         	}	
 		//	System.out.println(sb);	
 			long k = Long.parseLong(sb.toString(),16);
-		//	System.out.println(k);
+			System.out.println(k);
 		//done, k is that number!
 
+		long found_id = binsearch(k); 
 		
-		long curr_node = IDS[main.PROCESS_NUM - 1]; //starting point 
-		boolean done = false;
-		long found_id = 0; 	
-		while (!done){
-			//need to find the biggest entry in my table < k, or successor otherwise
+		return (int)main.ID_TO_INDEX.get(found_id); 
 
-			long [] ft = Stabilizer.finger_table(curr_node);
-			long best = curr_node; 
-			boolean found_closer = false; 
-			for (int i = 0; i < 32; i++){
-				if (ft[i] < k && cw_distance(ft[i],k) < cw_distance(best,k)){
-					best = ft[i]; 
-					found_closer = true; 	
-				}
-
-			}			
-	
-			if (found_closer){
-				curr_node = best; 
-			}else{
-				found_id = ft[0]; 
-				done = true; 	
-			}
-
-		}
-
-		int index = 0; 
-		for (int i = 0; i < 10; i ++){
-			if (IDS[i] == found_id){
-				index = i + 1;
-				break; 
-			}
-		}	
-		System.out.println(found_id);
-		return index; 
 	}
 
 
-	//for testing only
-	public static void main(String [] args){
-		String line = "SET DOG 2";
-		ArrayList<String> command = execute(line);		
-		
-		route("dog");
-		route("Course");
-		route("Hero");
-		route("Yeee_boi");
+	//wrapper function
+	//replaces the routing function, takes a key and returns an int (1 to 10) of the thing it belongs to 
+	public static long binsearch(long k){
+		if (k < main.LIVE_IDS[0]) return main.LIVE_IDS[0]; 
+		if (k >= main.LIVE_IDS[main.LIVE_IDS.length]) return main.LIVE_IDS[0]; 
 
-		for (int i = 0; i < 50; i ++){
-			route(Integer.toString(i));
+		return binsearch(main.LIVE_IDS, k, 0, main.LIVE_IDS.length-1);
+
+	}
+
+
+	public static long binsearch(long[] arr, long k, int min, int max){
+
+		if (max <= min){
+			return arr[min]; //only one entry 
 		}
 
+		int mid = (max+min)/2;
+		
+		
+		//both too low, go right
+		if (arr[mid] <= k) {
+			return binsearch(arr,k, mid + 1, max); 
+		}
 
+		//too high, go left
+		if (arr[mid] > k){
+			return binsearch(arr,k,min,mid); 	
+		} 
+
+		return 0L;
+	}
+
+
+	
+
+	//for testing only
+	public static void main(String [] args){
+		
+
+		String key = "Dog";	
+		
+		long [] test = {0L, 5L, 10L, 15L, 20L, 25L, 30L}; 
+		long check = 35L;
+
+
+		System.out.println(binsearch(test, check, 0, test.length-1)); 
 	}
 
 
