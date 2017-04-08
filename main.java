@@ -95,7 +95,7 @@ public class main implements RPCFunctions {
 
 	//function to initialize map between index and large number
 	public static void init_map(){
-
+		ID_TO_INDEX = new HashMap<Long, Integer>();
 		for (int i = 0; i < 10; i ++){
 			ID_TO_INDEX.put(IDS[0], i + 1); 			
 		}
