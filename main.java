@@ -126,6 +126,7 @@ public class main implements RPCFunctions {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));
         }
         catch (Exception e) {}
+        System.err.println("My PROCESS NUM IS: " + PROCESS_NUM + " and my Node ID is: " + IDS[PROCESS_NUM - 1]);
 		
 		LIVE_NODES[PROCESS_NUM - 1] = true;//make myself alive
         update_live(); 
