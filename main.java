@@ -74,8 +74,8 @@ public class main implements RPCFunctions {
 
 	//fxn to update list of living nodes
 	public void update_live(){
-		
-	ArrayList<Long> ids = new ArrayList<Long>(); 
+		System.out.println("Updating live nodes!"); 
+		ArrayList<Long> ids = new ArrayList<Long>(); 
 
 		for (int i = 0; i < 10; i++){
 			if(LIVE_NODES[i]){
@@ -139,6 +139,7 @@ public class main implements RPCFunctions {
 				System.out.println(input[0]); 
 				if (input[0].equals("SET")){
                     try {
+						System.out.println("LIVE NODES " + LIVE_IDS);
 				        int pid = Executor.route(input[1]); 
                 	    RPCFunctions r = rpc_connect.get_connection(pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
