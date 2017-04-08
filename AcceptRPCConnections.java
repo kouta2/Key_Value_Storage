@@ -22,7 +22,14 @@ public class AcceptRPCConnections implements Runnable
             main m = new main();
             RPCFunctions stub = (RPCFunctions) UnicastRemoteObject.exportObject(m, 0);
             Registry registry = LocateRegistry.getRegistry(port_num);
-            registry.bind("RPCFunctions", stub);
+            try
+            {
+                registry.bind("RPCFunctions", stub);
+            }
+            catch (Exception e)
+            {
+                registry.rebind("RPCFunctions", stub);
+            }
             System.err.println("Server ready");
         }
         catch (Exception e)
