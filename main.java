@@ -61,15 +61,15 @@ public class main implements RPCFunctions {
 
     public void notify_failure(int failed_pid)
     {
-    	update_live(); 
 	    LIVE_NODES[failed_pid - 1] = false;
+		update_live(); 
     }
 
     public void notify_connection(int connected_pid)
     {
-		update_live(); 
         LIVE_NODES[connected_pid - 1] = true;
-    }
+    	update_live(); 
+	}
 
 
 	//fxn to update list of living nodes
