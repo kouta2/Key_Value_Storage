@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map; 
 import java.util.Iterator;
 import java.util.Arrays;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class main implements RPCFunctions {
 
 	//Array that holds the chord ids for each machine
@@ -24,8 +27,10 @@ public class main implements RPCFunctions {
 
     static int PROCESS_NUM;
 
-    static int left_replica; // need to implement
-    static int right_replica; // need to implement
+    static int left_replica = -1; // need to implement
+    static int right_replica = -1; // need to implement
+
+    static final Lock lock = new ReentrantLock();
 
     public main() {}
 
@@ -34,11 +39,9 @@ public class main implements RPCFunctions {
     public String get(String key)
     {
         // return found or not found in local machine and send it to proper person
-    	
 	    String value = KV.get(key);
 		if (value != null) return "Found: " + value;
 		return "Not found"; 
-
     }
 
     public String set(String key, String value)
@@ -48,14 +51,16 @@ public class main implements RPCFunctions {
 		return "SET OK";
     }
 
-	public static void list_local(){
+	public static void list_local()
+    {
 		Iterator it = KV.entrySet().iterator();
-    	while (it.hasNext()) {
+    	while (it.hasNext()) 
+        {
         	Map.Entry pair = (Map.Entry)it.next();
        		System.out.println(pair.getKey());
-        System.out.println("END LIST");
        		//it.remove(); // avoids a ConcurrentModificationException
     	}		
+        System.out.println("END LIST");
 	}
 
     public boolean heartbeat()
@@ -89,12 +94,17 @@ public class main implements RPCFunctions {
 			}
 		}
 
-		LIVE_IDS = new long[ids.size()]; 
+        lock.lock();
+        try
+        {
+		    LIVE_IDS = new long[ids.size()]; // this is not thread safe
 		
-		for (int i = 0; i < ids.size();i ++){
-			LIVE_IDS[i] = ids.get(i); 
-			System.out.println(LIVE_IDS[i]); 
-		}
+		    for (int i = 0; i < ids.size();i ++){
+			    LIVE_IDS[i] = ids.get(i); 
+			    System.out.println(LIVE_IDS[i]); 
+		    }
+        }
+        finally { lock.unlock();}
 
 	}
 
@@ -158,7 +168,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     try {
-				        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; 
+				        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
                 	    System.out.println(lower_pid); 
 						RPCFunctions r = rpc_connect.get_connection(lower_pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
@@ -170,7 +180,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     try {
-				        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1;
+				        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
                 	    System.out.println(higher_pid); 
 						RPCFunctions r = rpc_connect.get_connection(higher_pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
@@ -196,7 +206,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     try {
-                        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length;
+                        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
                         RPCFunctions r = rpc_connect.get_connection(lower_pid);
 					    String result = r.get(input[1]);
                         if(!result.equals("Not found") && !done)
@@ -207,7 +217,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     try {
-                        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1;
+                        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
                         RPCFunctions r = rpc_connect.get_connection(higher_pid);
 					    String result = r.get(input[1]);
                         if(!done)

@@ -139,13 +139,18 @@ public class Executor extends Thread{
 	//wrapper function
 	//replaces the routing function, takes a key and returns an int (1 to 10) of the thing it belongs to 
 	public static long binsearch(long k){
-		System.out.println("In wrapper bin search"); 
-		if (k < main.LIVE_IDS[0])
-			return main.LIVE_IDS[0]; 
-		if (k >= main.LIVE_IDS[main.LIVE_IDS.length-1])
-			return main.LIVE_IDS[0]; 
-		System.out.println("Losing my mind"); 
-		return binsearch(main.LIVE_IDS, k, 0, main.LIVE_IDS.length-1);
+        main.lock.lock();
+        try
+        {
+		    System.out.println("In wrapper bin search"); 
+		    if (k < main.LIVE_IDS[0])
+			    return main.LIVE_IDS[0]; 
+		    if (k >= main.LIVE_IDS[main.LIVE_IDS.length-1])
+			    return main.LIVE_IDS[0]; 
+		    System.out.println("Losing my mind"); 
+		    return binsearch(main.LIVE_IDS, k, 0, main.LIVE_IDS.length-1);
+        }
+        finally {main.lock.unlock();}
 
 	}
 
