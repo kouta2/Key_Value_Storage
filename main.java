@@ -50,6 +50,7 @@ public class main implements RPCFunctions {
     	while (it.hasNext()) {
         	Map.Entry pair = (Map.Entry)it.next();
        		System.out.println(pair.getKey());
+        System.out.println("END LIST");
        		//it.remove(); // avoids a ConcurrentModificationException
     	}		
 	}
@@ -142,7 +143,7 @@ public class main implements RPCFunctions {
 
 				String input []  = cmd.split(" ");	
 				System.out.println(input[0]); 
-				if (input[0].equals("SET")){
+				if (input[0].equalsIgnoreCase("SET")){
                     try {
 	
 				        int pid = Executor.route(input[1]); 
@@ -154,7 +155,7 @@ public class main implements RPCFunctions {
                     catch (Exception e) {
 
                     }
-				}else if (input[0].equals("GET")){
+				}else if (input[0].equalsIgnoreCase("GET")){
                     try {
                         int pid = Executor.route(input[1]); 
                         RPCFunctions r = rpc_connect.get_connection(pid);
@@ -166,7 +167,6 @@ public class main implements RPCFunctions {
                     }
 				}else if (input[0].equalsIgnoreCase("LIST_LOCAL")){
 					try{
-	
 						list_local(); 
 					}catch (Exception e){}
 			
