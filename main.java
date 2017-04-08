@@ -45,7 +45,7 @@ public class main implements RPCFunctions {
 		return "SET OK";
     }
 
-	public void list_local(){
+	public static void list_local(){
 		Iterator it = KV.entrySet().iterator();
     	while (it.hasNext()) {
         	Map.Entry pair = (Map.Entry)it.next();
@@ -164,6 +164,12 @@ public class main implements RPCFunctions {
                     catch (Exception e) {
 
                     }
+				}else if (input[0].equalsIgnoreCase("LIST_LOCAL")){
+					try{
+	
+						list_local(); 
+					}catch (Exception e){}
+			
 				}else{
 					System.err.println("Operation not supported");
 				}
