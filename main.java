@@ -99,7 +99,7 @@ public class main implements RPCFunctions {
 	public static void init_map(){
 		ID_TO_INDEX = new HashMap<Long, Integer>();
 		for (int i = 0; i < 10; i ++){
-			ID_TO_INDEX.put(IDS[0], i + 1); 			
+			ID_TO_INDEX.put(IDS[i], i + 1); 			
 		}
 	}
 
@@ -115,8 +115,10 @@ public class main implements RPCFunctions {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));
         }
         catch (Exception e) {}
+		
 		LIVE_NODES[PROCESS_NUM - 1] = true;//make myself alive
-        // failure detector 
+        update_live(); 
+		// failure detector 
         Thread failure = new Thread(new FailureDetector(port_num, IDS, LIVE_NODES, PROCESS_NUM));
         failure.start();
         
@@ -142,14 +144,10 @@ public class main implements RPCFunctions {
 				System.out.println(input[0]); 
 				if (input[0].equals("SET")){
                     try {
-						System.out.println("LIVE NODES " + LIVE_IDS);
-	
-						for (int i = 0; i < 10; i ++){
-								System.out.println(LIVE_NODES[i]);
-						}
 	
 				        int pid = Executor.route(input[1]); 
-                	    RPCFunctions r = rpc_connect.get_connection(pid);
+                	    System.out.println(pid); 
+						RPCFunctions r = rpc_connect.get_connection(pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                         System.out.println(result);
                     }

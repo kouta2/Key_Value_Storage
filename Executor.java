@@ -125,11 +125,12 @@ public class Executor extends Thread{
         	}	
 		//	System.out.println(sb);	
 			long k = Long.parseLong(sb.toString(),16);
-			System.out.println(k);
+			System.out.println("Key hashed to: " + k);
 		//done, k is that number!
 
 		long found_id = binsearch(k); 
 		
+		System.out.println("ROUTED TO: " + found_id);
 		return (int)main.ID_TO_INDEX.get(found_id); 
 
 	}
@@ -138,16 +139,19 @@ public class Executor extends Thread{
 	//wrapper function
 	//replaces the routing function, takes a key and returns an int (1 to 10) of the thing it belongs to 
 	public static long binsearch(long k){
-		if (k < main.LIVE_IDS[0]) return main.LIVE_IDS[0]; 
-		if (k >= main.LIVE_IDS[main.LIVE_IDS.length]) return main.LIVE_IDS[0]; 
-
+		System.out.println("In wrapper bin search"); 
+		if (k < main.LIVE_IDS[0])
+			return main.LIVE_IDS[0]; 
+		if (k >= main.LIVE_IDS[main.LIVE_IDS.length-1])
+			return main.LIVE_IDS[0]; 
+		System.out.println("Losing my mind"); 
 		return binsearch(main.LIVE_IDS, k, 0, main.LIVE_IDS.length-1);
 
 	}
 
 
 	public static long binsearch(long[] arr, long k, int min, int max){
-
+		System.out.println("Searching..."); 
 		if (max <= min){
 			return arr[min]; //only one entry 
 		}
