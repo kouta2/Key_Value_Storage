@@ -68,13 +68,14 @@ public class main implements RPCFunctions {
 
     public void notify_connection(int connected_pid)
     {
+		System.out.println("Notified!"); 
         LIVE_NODES[connected_pid - 1] = true;
     	update_live(); 
 	}
 
 
 	//fxn to update list of living nodes
-	public void update_live(){
+	public static void update_live(){
 		System.out.println("Updating live nodes!"); 
 		ArrayList<Long> ids = new ArrayList<Long>(); 
 
@@ -114,7 +115,7 @@ public class main implements RPCFunctions {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));
         }
         catch (Exception e) {}
-		LIVE_NODES[PROCESS_NUM - 1] = true;
+		LIVE_NODES[PROCESS_NUM - 1] = true;//make myself alive
         // failure detector 
         Thread failure = new Thread(new FailureDetector(port_num, IDS, LIVE_NODES, PROCESS_NUM));
         failure.start();
