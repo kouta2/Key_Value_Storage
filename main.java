@@ -87,13 +87,14 @@ public class main implements RPCFunctions {
 		
 		for (int i = 0; i < ids.size();i ++){
 			LIVE_IDS[i] = ids.get(i); 
+			System.out.println(LIVE_IDS[i]); 
 		}
 
 	}
 
 
 	//function to initialize map between index and large number
-	public void init_map(){
+	public static void init_map(){
 
 		for (int i = 0; i < 10; i ++){
 			ID_TO_INDEX.put(IDS[0], i + 1); 			
@@ -104,6 +105,7 @@ public class main implements RPCFunctions {
 
 	public static void main(String [] args)
     {
+		init_map();
 		KV = new HashMap <String,String>();
 		try
         {
