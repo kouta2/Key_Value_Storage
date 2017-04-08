@@ -61,6 +61,7 @@ public class main implements RPCFunctions {
 
     public void notify_failure(int failed_pid)
     {
+		System.out.println("Notified!");
 	    LIVE_NODES[failed_pid - 1] = false;
 		update_live(); 
     }
