@@ -70,14 +70,12 @@ public class main implements RPCFunctions {
 
     public void notify_failure(int failed_pid)
     {
-		System.out.println("Notified!");
 	    LIVE_NODES[failed_pid - 1] = false;
 		update_live(); 
     }
 
     public void notify_connection(int connected_pid)
     {
-		System.out.println("Notified!"); 
         LIVE_NODES[connected_pid - 1] = true;
     	update_live(); 
 	}
@@ -85,7 +83,7 @@ public class main implements RPCFunctions {
 
 	//fxn to update list of living nodes
 	public static void update_live(){
-		System.out.println("Updating live nodes!"); 
+        System.out.println("Updating live nodes!");
 		ArrayList<Long> ids = new ArrayList<Long>(); 
 
 		for (int i = 0; i < 10; i++){
@@ -101,7 +99,6 @@ public class main implements RPCFunctions {
 		
 		    for (int i = 0; i < ids.size();i ++){
 			    LIVE_IDS[i] = ids.get(i); 
-			    System.out.println(LIVE_IDS[i]); 
 		    }
         }
         finally { lock.unlock();}
@@ -155,12 +152,10 @@ public class main implements RPCFunctions {
                 // we are guaranteed that at least one of these try catch blocks will execute its try completely 
 
 				String input []  = cmd.split(" ");	
-				System.out.println(input[0]); 
 				if (input[0].equalsIgnoreCase("SET")){
                     boolean done = false;
 				    int pid = Executor.route(input[1]); 
                     try {
-                	    System.out.println(pid); 
 						RPCFunctions r = rpc_connect.get_connection(pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                         System.out.println(result);
@@ -169,7 +164,6 @@ public class main implements RPCFunctions {
                     catch (Exception e) {}
                     try {
 				        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
-                	    System.out.println(lower_pid); 
 						RPCFunctions r = rpc_connect.get_connection(lower_pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                         if(!done)
@@ -181,7 +175,6 @@ public class main implements RPCFunctions {
                     catch (Exception e) {}
                     try {
 				        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
-                	    System.out.println(higher_pid); 
 						RPCFunctions r = rpc_connect.get_connection(higher_pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                         if(!done)
@@ -228,7 +221,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     if(!done)
-                        System.out.println("Not found");
+                        System.err.println("Not found");
 				}
 
 
