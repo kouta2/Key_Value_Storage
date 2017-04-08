@@ -24,6 +24,9 @@ public class main implements RPCFunctions {
 
     static int PROCESS_NUM;
 
+    static int left_replica; // need to implement
+    static int right_replica; // need to implement
+
     public main() {}
 
     // implement header functions in here for RPC
@@ -139,33 +142,89 @@ public class main implements RPCFunctions {
             	// RPCFunction r = rpc_connect.getConnection(PROCESS_NUM);
             	//TODO: handle replication	
             	
-                
+                // we are guaranteed that at least one of these try catch blocks will execute its try completely 
 
 				String input []  = cmd.split(" ");	
 				System.out.println(input[0]); 
 				if (input[0].equalsIgnoreCase("SET")){
+                    boolean done = false;
+				    int pid = Executor.route(input[1]); 
                     try {
-	
-				        int pid = Executor.route(input[1]); 
                 	    System.out.println(pid); 
 						RPCFunctions r = rpc_connect.get_connection(pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                         System.out.println(result);
+                        done = true;
                     }
-                    catch (Exception e) {
-
-                    }
-				}else if (input[0].equalsIgnoreCase("GET")){
+                    catch (Exception e) {}
                     try {
-                        int pid = Executor.route(input[1]); 
+				        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; 
+                	    System.out.println(lower_pid); 
+						RPCFunctions r = rpc_connect.get_connection(lower_pid);
+                        String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
+                        if(!done)
+                        {
+                            System.out.println(result);
+                            done = true;
+                        }
+                    }
+                    catch (Exception e) {}
+                    try {
+				        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1;
+                	    System.out.println(higher_pid); 
+						RPCFunctions r = rpc_connect.get_connection(higher_pid);
+                        String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
+                        if(!done)
+                            System.out.println(result);
+                    }
+                    catch (Exception e) {}
+				}
+
+
+
+                else if (input[0].equalsIgnoreCase("GET")){
+                    boolean done = false;
+                    int pid = Executor.route(input[1]); 
+                    try {
                         RPCFunctions r = rpc_connect.get_connection(pid);
 					    String result = r.get(input[1]);
-                        System.out.println(result);
+                        if(!result.equals("Not found"))
+                        {
+                            done = true;
+                            System.out.println(result);
+                        }
                     }
-                    catch (Exception e) {
+                    catch (Exception e) {}
+                    try {
+                        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length;
+                        RPCFunctions r = rpc_connect.get_connection(lower_pid);
+					    String result = r.get(input[1]);
+                        if(!result.equals("Not found") && !done)
+                        {
+                            done = true;
+                            System.out.println(result);
+                        }
+                    }
+                    catch (Exception e) {}
+                    try {
+                        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1;
+                        RPCFunctions r = rpc_connect.get_connection(higher_pid);
+					    String result = r.get(input[1]);
+                        if(!done)
+                        {
+                            done = true;
+                            System.out.println(result);
+                        }
+                    }
+                    catch (Exception e) {}
+                    if(!done)
+                        System.out.println("Not found");
+				}
 
-                    }
-				}else if (input[0].equalsIgnoreCase("LIST_LOCAL")){
+
+
+                else if (input[0].equalsIgnoreCase("LIST_LOCAL")){
+                    // NEED TO SORT LIST!
 					try{
 						list_local(); 
 					}catch (Exception e){}
