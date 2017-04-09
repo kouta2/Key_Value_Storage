@@ -127,6 +127,8 @@ public class Stabilizer {
 
     public static void check_to_update_left_and_right_replicas(int new_pid, boolean alive)
     {
+        if(new_pid == main.PROCESS_NUM)
+            return;
         main.replica_lock.lock();
         try
         {
@@ -161,6 +163,8 @@ public class Stabilizer {
             }
         }
         finally { main.replica_lock.unlock();}
+        System.err.println("left: " + main.left_replica);
+        System.err.println("right: " + main.right_replica);
     }
 }
 
