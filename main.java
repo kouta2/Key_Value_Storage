@@ -19,7 +19,7 @@ public class main implements RPCFunctions {
 	static long [] IDS = {0L,429496729L,858993459L,1288490188L,1717986918L,2147483648L,2576980377L,3006477107L,3435973836L,3865470566L};
     static HashMap<Long,Integer> ID_TO_INDEX; 
 
-    static TreeMap<Long, Integer> LIVE_NODE_ID_TO_PID;  // need locking
+    static TreeMap<Long, Integer> LIVE_NODE_ID_TO_PID = new TreeMap<Long, Integer>(); // need locking
 	static boolean [] LIVE_NODES = {false,false,false,false,false,false,false,false,false,false}; // need locking
 	static long[] LIVE_IDS; // need locking
 	
