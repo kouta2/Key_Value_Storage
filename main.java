@@ -176,7 +176,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     try {
-				        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+				        int lower_pid = left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
 						RPCFunctions r = rpc_connect.get_connection(lower_pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                         if(!done)
@@ -187,7 +187,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     try {
-				        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+				        int higher_pid = right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
 						RPCFunctions r = rpc_connect.get_connection(higher_pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                         if(!done)
