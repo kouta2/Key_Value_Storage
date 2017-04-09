@@ -93,6 +93,7 @@ public class main implements RPCFunctions {
         live_node_id_to_pid_lock.lock();
         try
         {
+            LIVE_NODE_ID_TO_PID = new TreeMap<Long, Integer>();
 		    for (int i = 0; i < 10; i++){
 			    if(LIVE_NODES[i]){
 				    ids.add(IDS[i]); 
