@@ -11,3 +11,9 @@ To check if rmiregistry is already running on a machine, type the following comm
 As long as rmiregistry is running, then type the following command inside the class_files directory:
 >> java main
 
+To kill a client, simply send a SIGINT (CTRL+C). 
+
+To kill a rmiregistry type:
+>> ps aux | grep rmiregistry
+look for the pid of the serving running and type:
+>>kill <pid>
