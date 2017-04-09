@@ -244,6 +244,15 @@ public class main implements RPCFunctions {
 						list_local(); 
 					}catch (Exception e){}
 			
+				}else if(input[0].equalsIgnoreCase("OWNERS")) {
+					int pid = Executor.route(input[1]);
+					long id = IDS[pid-1]; 
+					
+					int higher = Stabilizer.get_higher_entry(id); 
+					int lower = Stabilizer.get_lower_entry(id); 
+					System.out.println(lower + " " + pid + " " + higher); 
+ 
+					
 				}else{
 					System.err.println("Operation not supported");
 				}
