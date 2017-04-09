@@ -168,6 +168,7 @@ public class main implements RPCFunctions {
 				if (input[0].equalsIgnoreCase("SET")){
                     boolean done = false;
 				    int pid = Executor.route(input[1]); 
+                    System.err.println("left: " + left_replica + "\nright: " + right_replica + "\npid: " + pid);
                     try {
 						RPCFunctions r = rpc_connect.get_connection(pid);
                         String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
