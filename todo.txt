@@ -1,7 +1,3 @@
 Make our datastructures thread safe
 
-implement left and right replica
-
-stabilization
-
 BATCH

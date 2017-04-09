@@ -9,36 +9,52 @@ public class Stabilizer {
         long[] live_ids = main.LIVE_IDS;
         int pid = main.PROCESS_NUM;
 
-        Map.Entry<Long, Integer> pair = node_id_to_pid.lowerEntry(node_id);
-        if(pair == null)
+        main.live_node_id_to_pid_lock.lock();
+        try
         {
-            Integer val = node_id_to_pid.get(live_ids[live_ids.length - 1]);
-            if(val == main.ID_TO_INDEX.get(node_id))
-                return -1;
+            Map.Entry<Long, Integer> pair = node_id_to_pid.lowerEntry(node_id);
+            if(pair == null)
+            {
+                main.live_ids_lock.lock();
+                Integer val = null;
+                try{ val = node_id_to_pid.get(live_ids[live_ids.length - 1]);}
+                finally { main.live_ids_lock.unlock();}
+                if(val == main.ID_TO_INDEX.get(node_id))
+                    return -1;
+                else
+                    return val;
+            }
             else
-                return val;
+                return pair.getValue();
         }
-        else
-            return pair.getValue();
+        finally { main.live_node_id_to_pid_lock.unlock();}
     }
 
     public static int get_higher_entry(long node_id)
     {
-        TreeMap<Long, Integer> node_id_to_pid = main.LIVE_NODE_ID_TO_PID;        
+        TreeMap<Long, Integer> node_id_to_pid = main.LIVE_NODE_ID_TO_PID;
         long[] live_ids = main.LIVE_IDS;
         int pid = main.PROCESS_NUM;
 
-        Map.Entry<Long, Integer> pair = node_id_to_pid.higherEntry(node_id);
-        if(pair == null)
+        main.live_node_id_to_pid_lock.lock();
+        try
         {
-            Integer val = node_id_to_pid.get(live_ids[0]);
-            if(val == main.ID_TO_INDEX.get(node_id))
-                return -1;
+            Map.Entry<Long, Integer> pair = node_id_to_pid.higherEntry(node_id);
+            if(pair == null)
+            {
+                main.live_ids_lock.lock();
+                Integer val = null;
+                try { val = node_id_to_pid.get(live_ids[0]);}
+                finally { main.live_ids_lock.unlock();}
+                if(val == main.ID_TO_INDEX.get(node_id))
+                    return -1;
+                else
+                    return val;
+            }
             else
-                return val;
+                return pair.getValue();
         }
-        else
-            return pair.getValue();
+        finally { main.live_node_id_to_pid_lock.unlock();}
     }
 
     public static void rebalance(int pid, boolean alive)
@@ -46,8 +62,6 @@ public class Stabilizer {
         long[] IDS = main.IDS;
         int my_pid = main.PROCESS_NUM;
         HashMap<String, String> kv = main.KV;
-        int left_rep = main.left_replica;
-        int right_rep = main.right_replica;
 
         long node_id = IDS[pid - 1];
         int left = get_lower_entry(node_id);
@@ -58,48 +72,55 @@ public class Stabilizer {
 
         if(my_pid == left || my_pid == right || my_pid == right_right)
         {
-            Iterator it = kv.entrySet().iterator();
-            while(it.hasNext())
+            main.replica_lock.lock();
+            try
             {
-                Map.Entry pair = (Map.Entry)it.next();
-                int owner = Executor.route((String)pair.getKey());
-                ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(main.port_num);
-                if(owner == my_pid)
+                int left_rep = main.left_replica;
+                int right_rep = main.right_replica;
+                Iterator it = kv.entrySet().iterator();
+                while(it.hasNext())
                 {
-                    try
+                    Map.Entry pair = (Map.Entry)it.next();
+                    int owner = Executor.route((String)pair.getKey());
+                    ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(main.port_num);
+                    if(owner == my_pid)
                     {
-                        RPCFunctions r = rpc_connect.get_connection(left_rep);
-                        r.set((String)pair.getKey(), (String)pair.getValue());
+                        try
+                        {
+                            RPCFunctions r = rpc_connect.get_connection(left_rep);
+                            r.set((String)pair.getKey(), (String)pair.getValue());
+                        }
+                        catch (Exception e) {}
+                        try
+                        {
+                            RPCFunctions r = rpc_connect.get_connection(right_rep);
+                            r.set((String)pair.getKey(), (String)pair.getValue());
+                        }
+                        catch (Exception e) {}
                     }
-                    catch (Exception e) {}
-                    try
+                    else if(owner == left_rep)
                     {
-                        RPCFunctions r = rpc_connect.get_connection(right_rep);
-                        r.set((String)pair.getKey(), (String)pair.getValue());
+                        try
+                        {
+                            RPCFunctions r = rpc_connect.get_connection(left_rep);
+                            r.set((String)pair.getKey(), (String)pair.getValue());
+                        }
+                        catch (Exception e) {}
                     }
-                    catch (Exception e) {}
+                    else if(owner == right_rep)
+                    {
+                        try
+                        {
+                            RPCFunctions r = rpc_connect.get_connection(right_rep);
+                            r.set((String)pair.getKey(), (String)pair.getValue());
+                        }
+                        catch (Exception e) {}
+                    }
+                    else
+                        kv.remove(pair.getKey());
                 }
-                else if(owner == left_rep)
-                {
-                    try
-                    {
-                        RPCFunctions r = rpc_connect.get_connection(left_rep);
-                        r.set((String)pair.getKey(), (String)pair.getValue());
-                    }
-                    catch (Exception e) {}
-                }
-                else if(owner == right_rep)
-                {
-                    try
-                    {
-                        RPCFunctions r = rpc_connect.get_connection(right_rep);
-                        r.set((String)pair.getKey(), (String)pair.getValue());
-                    }
-                    catch (Exception e) {}
-                }
-                else
-                    kv.remove(pair.getKey());
             }
+            finally { main.replica_lock.unlock();}
         }
     }
 
