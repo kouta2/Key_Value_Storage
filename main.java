@@ -11,26 +11,29 @@ import java.util.Iterator;
 import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.TreeMap;
 
 public class main implements RPCFunctions {
 
 	//Array that holds the chord ids for each machine
 	static long [] IDS = {0L,429496729L,858993459L,1288490188L,1717986918L,2147483648L,2576980377L,3006477107L,3435973836L,3865470566L};
-	static boolean [] LIVE_NODES = {false,false,false,false,false,false,false,false,false,false}; 
-	static HashMap<Long,Integer> ID_TO_INDEX; 
-	static long[] LIVE_IDS; 
+    static HashMap<Long,Integer> ID_TO_INDEX; 
+
+    static TreeMap<Long, Integer> LIVE_NODE_ID_TO_PID;  // need locking
+	static boolean [] LIVE_NODES = {false,false,false,false,false,false,false,false,false,false}; // need locking
+	static long[] LIVE_IDS; // need locking
 	
-	static HashMap <String, String> KV;			
+	static HashMap <String, String> KV; // need live_ids_locking
 	
-    static RPCFunctions list_of_client_rpcs [] = new RPCFunctions[10]; // list of RPCs to communicate with other machines
     static int port_num = 2001;
 
     static int PROCESS_NUM;
 
-    static int left_replica = -1; // need to implement
-    static int right_replica = -1; // need to implement
+    static int left_replica = -1; // need to implement. Need live_ids_locking
+    static int right_replica = -1; // need to implement. Need live_ids_locking
 
-    static final Lock lock = new ReentrantLock();
+    static final Lock live_ids_lock = new ReentrantLock(); // lock for LIVE_IDS
+    static final Lock live_node_id_to_pid_lock = new ReentrantLock(); // lock for LIVE_NODE_ID_TO_PID
 
     public main() {}
 
@@ -39,7 +42,7 @@ public class main implements RPCFunctions {
     public String get(String key)
     {
         // return found or not found in local machine and send it to proper person
-	    String value = KV.get(key);
+        String value = KV.get(key);
 		if (value != null) return "Found: " + value;
 		return "Not found"; 
     }
@@ -47,7 +50,7 @@ public class main implements RPCFunctions {
     public String set(String key, String value)
     {
         // set/update key-value pair locally
-       	KV.put(key, value); 
+        KV.put(key, value);
 		return "SET OK";
     }
 
@@ -86,13 +89,19 @@ public class main implements RPCFunctions {
         System.out.println("Updating live nodes!");
 		ArrayList<Long> ids = new ArrayList<Long>(); 
 
-		for (int i = 0; i < 10; i++){
-			if(LIVE_NODES[i]){
-				ids.add(IDS[i]); 
-			}
-		}
+        live_node_id_to_pid_lock.lock();
+        try
+        {
+		    for (int i = 0; i < 10; i++){
+			    if(LIVE_NODES[i]){
+				    ids.add(IDS[i]); 
+                    LIVE_NODE_ID_TO_PID.put(IDS[i], i + 1);
+			    }
+		    }
+        }
+        finally { live_node_id_to_pid_lock.unlock();}
 
-        lock.lock();
+        live_ids_lock.lock();
         try
         {
 		    LIVE_IDS = new long[ids.size()]; // this is not thread safe
@@ -101,8 +110,11 @@ public class main implements RPCFunctions {
 			    LIVE_IDS[i] = ids.get(i); 
 		    }
         }
-        finally { lock.unlock();}
+        finally { live_ids_lock.unlock();}
 
+        // Stabilizer.check_to_update_left_and_right_replicas(connected_pid, true);
+        // Stabilizer.rebalance()
+        
 	}
 
 
@@ -113,9 +125,6 @@ public class main implements RPCFunctions {
 			ID_TO_INDEX.put(IDS[i], i + 1); 			
 		}
 	}
-
-
-
 	public static void main(String [] args)
     {
 		init_map();
@@ -150,7 +159,7 @@ public class main implements RPCFunctions {
             	// RPCFunction r = rpc_connect.getConnection(PROCESS_NUM);
             	//TODO: handle replication	
             	
-                // we are guaranteed that at least one of these try catch blocks will execute its try completely 
+                // we are guaranteed that at least one of these try catch blive_ids_locks will execute its try completely 
 
 				String input []  = cmd.split(" ");	
 				if (input[0].equalsIgnoreCase("SET")){
@@ -200,7 +209,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     try {
-                        int lower_pid = pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+                        int lower_pid = left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
                         RPCFunctions r = rpc_connect.get_connection(lower_pid);
 					    String result = r.get(input[1]);
                         if(!result.equals("Not found") && !done)
@@ -211,7 +220,7 @@ public class main implements RPCFunctions {
                     }
                     catch (Exception e) {}
                     try {
-                        int higher_pid = pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+                        int higher_pid = right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
                         RPCFunctions r = rpc_connect.get_connection(higher_pid);
 					    String result = r.get(input[1]);
                         if(!done)

@@ -16,7 +16,7 @@ public class Executor extends Thread{
 
 	/*
  *
- *  helper fxn to calculate clockwise mod 2^32 distance from a->b
+ *  helper fxn to calculate clive_ids_lockwise mod 2^32 distance from a->b
  *  */
 	private static long cw_distance(long a, long b){
 		if (b >= a){
@@ -101,7 +101,7 @@ public class Executor extends Thread{
 	public static int route(String key){
 		/*
  *		From my notes on routing for Chord:
- *			At each step attempt to minimize your clockwise distance to the key
+ *			At each step attempt to minimize your clive_ids_lockwise distance to the key
  *			If you can't get any closer without going over, go to your successor, and stop!
  * 		*/
 
@@ -137,7 +137,7 @@ public class Executor extends Thread{
 	//wrapper function
 	//replaces the routing function, takes a key and returns an int (1 to 10) of the thing it belongs to 
 	public static long binsearch(long k){
-        main.lock.lock();
+        main.live_ids_lock.lock();
         try
         {
 		    if (k < main.LIVE_IDS[0])
@@ -146,7 +146,7 @@ public class Executor extends Thread{
 			    return main.LIVE_IDS[0]; 
 		    return binsearch(main.LIVE_IDS, k, 0, main.LIVE_IDS.length-1);
         }
-        finally {main.lock.unlock();}
+        finally {main.live_ids_lock.unlock();}
 
 	}
 
