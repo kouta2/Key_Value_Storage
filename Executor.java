@@ -7,91 +7,6 @@ public class Executor extends Thread{
 	
 	static long [] IDS = {0L,429496729L,858993459L,1288490188L,1717986918L,2147483648L,2576980377L,3006477107L,3435973836L,3865470566L};
 	
-	@Override
-	public void run(){
-
-
-	}	
-
-
-	/*
- *
- *  helper fxn to calculate clive_ids_lockwise mod 2^32 distance from a->b
- *  */
-	private static long cw_distance(long a, long b){
-		if (b >= a){
-			return b-a;
-		}else{
-			return (b + 4294967296L) - a; 
-		}
-
-	}
-
-/*
-	private static String get(String key){
-
-	}
-
-	private static String set(String key, String val){
-
-
-	}
-*/
-
-	
-	
-
-
-	/*
- *  Big blackbox function to route, execute, and return output to user
- *	input line: line of input from user or batch file
- *	return: doc specified output from the execution of that command 
-* */
-	private static ArrayList<String> execute(String line){
-
-		ArrayList<String> args = new ArrayList<String>(Arrays.asList(line.split(" ")));
-		
-		//in that array,args[1] is the key (if the command takes one)
-		String key = "";
-		if (args.size() > 1){
-			key = args.get(1);
-		}
-
-		if (args.get(0).equals("SET")){
-
-			//RPC business!			
-
-		}else if (args.get(0).equals("GET")){
-
-			//RPC business!
-
-
-		}else if (args.get(0).equals("LIST_LOCAL")){
-	
-			
-	
-		}else if (args.get(0).equals("OWNERS")){
-			//need to find the owners of this key
-						
-		}else if (args.get(0).equals("BATCH")){
-			//need to execute a batch command
-		}else{
-			System.err.println("ERROR: Unsupported Command");	
-		}
-			
-
-
-		//ROUTE(KEY) (SKIP THIS STEP IF LIST_LOCAL
-		
-
-		//SEND COMMAND TO APPROPRIATE LISTENER ON THE CORRECT VM	
-
-
-
-		return args;
-	}
-
-
 
 	/*
  * param key: key to route
@@ -171,33 +86,7 @@ public class Executor extends Thread{
 
 		return 0L;
 	}
-
-
-	
-
-	//for testing only
-	public static void main(String [] args){
-		
-
-		String key = "Dog";	
-		
-		long [] test = {0L, 5L, 10L, 15L, 20L, 25L, 30L}; 
-		long check = 35L;
-
-
-		System.err.println(binsearch(test, check, 0, test.length-1)); 
-	}
-
-
 }
-
-
-
-
-
-
-
-
 
 
 
