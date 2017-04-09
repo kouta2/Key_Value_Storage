@@ -13,7 +13,7 @@ public class Stabilizer {
         if(pair == null)
         {
             Integer val = node_id_to_pid.get(live_ids[live_ids.length - 1]);
-            if(val == pid)
+            if(val == main.ID_TO_INDEX.get(node_id))
                 return -1;
             else
                 return val;
@@ -32,7 +32,7 @@ public class Stabilizer {
         if(pair == null)
         {
             Integer val = node_id_to_pid.get(live_ids[0]);
-            if(val == pid)
+            if(val == main.ID_TO_INDEX.get(node_id))
                 return -1;
             else
                 return val;
