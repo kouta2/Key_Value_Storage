@@ -96,7 +96,7 @@ public class main implements RPCFunctions {
                 catch (Exception e) {}
                 try 
                 {
-				    int lower_pid = left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+				    int lower_pid = Stabilizer.get_lower_entry(pid); // left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
 					RPCFunctions r = rpc_connect.get_connection(lower_pid);
                     String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                     if(!done)
@@ -109,7 +109,7 @@ public class main implements RPCFunctions {
                 catch (Exception e) {}
                 try 
                 {
-				    int higher_pid = right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+				    int higher_pid = Stabilizer.get_higher_entry(pid); // right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
 					RPCFunctions r = rpc_connect.get_connection(higher_pid);
                     String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                     if(!done)
@@ -233,7 +233,8 @@ public class main implements RPCFunctions {
 
 
 	//fxn to update list of living nodes
-	public static void update_live(int pid, boolean alive){
+	public static void update_live(int pid, boolean alive)
+    {
         System.err.println("Updating live nodes!");
 		ArrayList<Long> ids = new ArrayList<Long>(); 
 
@@ -267,7 +268,8 @@ public class main implements RPCFunctions {
 
 
 	//function to initialize map between index and large number
-	public static void init_map(){
+	public static void init_map()
+    {
 		ID_TO_INDEX = new HashMap<Long, Integer>();
 		for (int i = 0; i < 10; i ++){
 			ID_TO_INDEX.put(IDS[i], i + 1); 			
