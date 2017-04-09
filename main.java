@@ -11,8 +11,8 @@ import java.util.Iterator;
 import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.TreeMap;
-
+import java.util.TreeMap; 
+import java.io.*;
 public class main implements RPCFunctions {
 
 	//Array that holds the chord ids for each machine
@@ -66,6 +66,167 @@ public class main implements RPCFunctions {
     	}		
         System.out.println("END LIST");
 	}
+
+	public static void batch(String[] args){
+		
+		PrintStream output = System.out; 
+		
+		try{
+			output = new PrintStream(new BufferedOutputStream(new FileOutputStream(args[2]))); 
+
+		}catch(Exception e){
+			output = System.out; 
+		}
+
+
+		BufferedReader br = null; 
+		try{
+			br = new BufferedReader(new FileReader(args[1]));
+		
+			String line = br.readLine();
+			
+    		while (line != null) {
+			//BEGIN COPYPASTA
+				
+        	ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(port_num);
+			
+			String input []  = line.split(" ");	
+				if (input[0].equalsIgnoreCase("SET")){
+                    boolean done = false;
+				    int pid = Executor.route(input[1]); 
+                    try {
+						RPCFunctions r = rpc_connect.get_connection(pid);
+                        String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
+                        output.println(result);
+                     	output.flush(); 
+						done = true;
+                    }
+                    catch (Exception e) {}
+                    try {
+				        int lower_pid = left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+						RPCFunctions r = rpc_connect.get_connection(lower_pid);
+                        String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
+                        if(!done)
+                        {
+                            output.println(result);
+                     		output.flush(); 
+                            done = true;
+                        }
+                    }
+                    catch (Exception e) {}
+                    try {
+				        int higher_pid = right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+						RPCFunctions r = rpc_connect.get_connection(higher_pid);
+                        String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
+                        if(!done){
+                            output.println(result);
+                     		output.flush(); 
+                    	}
+					}
+                    catch (Exception e) {}
+				}
+
+
+
+                else if (input[0].equalsIgnoreCase("GET")){
+                    boolean done = false;
+                    int pid = Executor.route(input[1]); 
+                    try {
+                        RPCFunctions r = rpc_connect.get_connection(pid);
+					    String result = r.get(input[1]);
+                        if(!result.equals("Not found"))
+                        {
+                            done = true;
+                            output.println(result);
+                     		output.flush(); 
+                        }
+                    }
+                    catch (Exception e) {}
+                    try {
+                        int lower_pid = left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+                        RPCFunctions r = rpc_connect.get_connection(lower_pid);
+					    String result = r.get(input[1]);
+                        if(!result.equals("Not found") && !done)
+                        {
+                            done = true;
+                            output.println(result);
+                     		output.flush(); 
+                        }
+                    }
+                    catch (Exception e) {}
+                    try {
+                        int higher_pid = right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+                        RPCFunctions r = rpc_connect.get_connection(higher_pid);
+					    String result = r.get(input[1]);
+                        if(!done)
+                        {
+                            done = true;
+                            output.println(result);
+                     		output.flush(); 
+                        }
+                    }
+                    catch (Exception e) {}
+                    if(!done)
+                        System.err.println("Not found");
+				}
+
+
+
+                else if (input[0].equalsIgnoreCase("LIST_LOCAL")){
+                    // NEED TO SORT LIST!
+					try{
+						list_local(); 
+					}catch (Exception e){}
+			
+				}else if(input[0].equalsIgnoreCase("OWNERS")) {
+					int pid = Executor.route(input[1]);
+					long id = IDS[pid-1]; 
+					
+					int higher = Stabilizer.get_higher_entry(id); 
+					int lower = Stabilizer.get_lower_entry(id); 
+					output.println(lower + " " + pid + " " + higher); 
+					output.flush();  
+				}else if (input[0].equalsIgnoreCase("BATCH")){
+		
+					//batch will have either one file or two
+					batch(input); 
+
+	
+					
+				}else{
+					System.err.println("Operation not supported");
+				}
+
+
+
+
+
+
+
+
+
+
+
+
+
+			//END COPYPASTA	
+				
+
+						
+				line = br.readLine();
+			}
+		}catch(Exception ex){}
+		 finally {
+		
+    		try{br.close();}catch(Exception ex){}
+		}
+
+		
+		
+	}
+	
+
+		
 
     public boolean heartbeat()
     {
@@ -253,6 +414,12 @@ public class main implements RPCFunctions {
 					int lower = Stabilizer.get_lower_entry(id); 
 					System.out.println(lower + " " + pid + " " + higher); 
  
+				}else if (input[0].equalsIgnoreCase("BATCH")){
+		
+					//batch will have either one file or two
+					batch(input); 
+
+	
 					
 				}else{
 					System.err.println("Operation not supported");
