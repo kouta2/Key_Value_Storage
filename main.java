@@ -19,7 +19,7 @@ public class main implements RPCFunctions {
 	static long [] IDS = {0L,429496729L,858993459L,1288490188L,1717986918L,2147483648L,2576980377L,3006477107L,3435973836L,3865470566L};
     static HashMap<Long,Integer> ID_TO_INDEX; 
 
-    static TreeMap<Long, Integer> LIVE_NODE_ID_TO_PID = new TreeMap<Long, Integer>(); // need locking
+    static TreeMap<Long, Integer> LIVE_NODE_ID_TO_PID; // need locking
 	static boolean [] LIVE_NODES = {false,false,false,false,false,false,false,false,false,false}; // need locking
 	static long[] LIVE_IDS; // need locking
 	
@@ -34,6 +34,7 @@ public class main implements RPCFunctions {
 
     static final Lock live_ids_lock = new ReentrantLock(); // lock for LIVE_IDS
     static final Lock live_node_id_to_pid_lock = new ReentrantLock(); // lock for LIVE_NODE_ID_TO_PID
+    static final Lock replica_lock = new ReentrantLock(); // lock for replica integers
 
     public main() {}
 
@@ -74,18 +75,18 @@ public class main implements RPCFunctions {
     public void notify_failure(int failed_pid)
     {
 	    LIVE_NODES[failed_pid - 1] = false;
-		update_live(); 
+		update_live(failed_pid, false); 
     }
 
     public void notify_connection(int connected_pid)
     {
         LIVE_NODES[connected_pid - 1] = true;
-    	update_live(); 
+    	update_live(connected_pid, true); 
 	}
 
 
 	//fxn to update list of living nodes
-	public static void update_live(){
+	public static void update_live(int pid, boolean alive){
         System.out.println("Updating live nodes!");
 		ArrayList<Long> ids = new ArrayList<Long>(); 
 
@@ -112,8 +113,8 @@ public class main implements RPCFunctions {
         }
         finally { live_ids_lock.unlock();}
 
-        // Stabilizer.check_to_update_left_and_right_replicas(connected_pid, true);
-        // Stabilizer.rebalance()
+        Stabilizer.check_to_update_left_and_right_replicas(pid, alive);
+        Stabilizer.rebalance(pid, alive);
         
 	}
 
@@ -129,7 +130,8 @@ public class main implements RPCFunctions {
     {
 		init_map();
 		
-		KV = new HashMap <String,String>();
+	    LIVE_NODE_ID_TO_PID = new TreeMap<Long, Integer>();
+        KV = new HashMap <String,String>();
 		try
         {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));
@@ -138,7 +140,7 @@ public class main implements RPCFunctions {
         System.err.println("My PROCESS NUM IS: " + PROCESS_NUM + " and my Node ID is: " + IDS[PROCESS_NUM - 1]);
 		
 		LIVE_NODES[PROCESS_NUM - 1] = true;//make myself alive
-        update_live(); 
+        update_live(PROCESS_NUM, true); 
 		// failure detector 
         Thread failure = new Thread(new FailureDetector(port_num, IDS, LIVE_NODES, PROCESS_NUM));
         failure.start();
