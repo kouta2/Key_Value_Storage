@@ -85,6 +85,7 @@ public class main implements RPCFunctions {
             {
                 boolean done = false;
 				int pid = Executor.route(input[1]); 
+                System.err.println("PID: " + pid);
                 try 
                 {
 					RPCFunctions r = rpc_connect.get_connection(pid);
@@ -96,7 +97,8 @@ public class main implements RPCFunctions {
                 catch (Exception e) {}
                 try 
                 {
-				    int lower_pid = Stabilizer.get_lower_entry(pid); // left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+				    int lower_pid = Stabilizer.get_lower_entry(IDS[pid - 1]); // left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+                    System.err.println("LOWER_ID: " + lower_pid);
 					RPCFunctions r = rpc_connect.get_connection(lower_pid);
                     String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                     if(!done)
@@ -109,7 +111,8 @@ public class main implements RPCFunctions {
                 catch (Exception e) {}
                 try 
                 {
-				    int higher_pid = Stabilizer.get_higher_entry(pid); // right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+				    int higher_pid = Stabilizer.get_higher_entry(IDS[pid - 1]); // right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+                    System.err.println("HIGHER_ID: " + higher_pid);
 					RPCFunctions r = rpc_connect.get_connection(higher_pid);
                     String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                     if(!done)
@@ -135,7 +138,7 @@ public class main implements RPCFunctions {
                 catch (Exception e) {}
                 try 
                 {
-                    int lower_pid = Stabilizer.get_lower_entry(pid); // left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+                    int lower_pid = Stabilizer.get_lower_entry(IDS[pid - 1]); // left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
                     RPCFunctions r = rpc_connect.get_connection(lower_pid);
 					String result = r.get(input[1]);
                     if(!result.equals("Not found") && !done)
@@ -148,7 +151,7 @@ public class main implements RPCFunctions {
                 catch (Exception e) {}
                 try 
                 {
-                    int higher_pid = Stabilizer.get_higher_entry(pid); // right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+                    int higher_pid = Stabilizer.get_higher_entry(IDS[pid - 1]); // right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
                     RPCFunctions r = rpc_connect.get_connection(higher_pid);
 					String result = r.get(input[1]);
                     if(!done)
