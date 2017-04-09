@@ -185,7 +185,7 @@ public class Executor extends Thread{
 		long check = 35L;
 
 
-		System.out.println(binsearch(test, check, 0, test.length-1)); 
+		System.err.println(binsearch(test, check, 0, test.length-1)); 
 	}
 
 

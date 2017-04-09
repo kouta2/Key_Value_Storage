@@ -55,16 +55,18 @@ public class main implements RPCFunctions {
 		return "SET OK";
     }
 
-	public static void list_local()
+	public static void list_local(PrintStream output)
     {
 		Iterator it = KV.entrySet().iterator();
     	while (it.hasNext()) 
         {
         	Map.Entry pair = (Map.Entry)it.next();
-       		System.out.println(pair.getKey());
+       		output.println(pair.getKey());
+            output.flush();
        		//it.remove(); // avoids a ConcurrentModificationException
     	}		
-        System.out.println("END LIST");
+        output.println("END LIST");
+        output.flush();
 	}
 
     public static void handle_one_line(String cmd, PrintStream output)
@@ -88,6 +90,7 @@ public class main implements RPCFunctions {
 					RPCFunctions r = rpc_connect.get_connection(pid);
                     String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                     output.println(result);
+                    output.flush();
                     done = true;
                 }
                 catch (Exception e) {}
@@ -99,6 +102,7 @@ public class main implements RPCFunctions {
                     if(!done)
                     {
                         output.println(result);
+                        output.flush();
                         done = true;
                     }
                 }
@@ -110,6 +114,7 @@ public class main implements RPCFunctions {
                     String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                     if(!done)
                         output.println(result);
+                        output.flush();
                 }
                 catch (Exception e) {}
 			}
@@ -124,30 +129,33 @@ public class main implements RPCFunctions {
                     {
                         done = true;
                         output.println(result);
+                        output.flush();
                     }
                 }
                 catch (Exception e) {}
                 try 
                 {
-                    int lower_pid = left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
+                    int lower_pid = Stabilizer.get_lower_entry(pid); // left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
                     RPCFunctions r = rpc_connect.get_connection(lower_pid);
 					String result = r.get(input[1]);
                     if(!result.equals("Not found") && !done)
                     {
                         done = true;
                         output.println(result);
+                        output.flush();
                     }
                 }
                 catch (Exception e) {}
                 try 
                 {
-                    int higher_pid = right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
+                    int higher_pid = Stabilizer.get_higher_entry(pid); // right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
                     RPCFunctions r = rpc_connect.get_connection(higher_pid);
 					String result = r.get(input[1]);
                     if(!done)
                     {
                         done = true;
                         output.println(result);
+                        output.flush();
                     }
                 }
                 catch (Exception e) {}
@@ -157,7 +165,7 @@ public class main implements RPCFunctions {
             else if (input[0].equalsIgnoreCase("LIST_LOCAL"))
             {
                 // NEED TO SORT LIST!
-				try{ list_local();}
+				try{ list_local(output);}
 			    catch (Exception e){}
 			
 			}
@@ -169,12 +177,11 @@ public class main implements RPCFunctions {
 				int higher = Stabilizer.get_higher_entry(id); 
 				int lower = Stabilizer.get_lower_entry(id); 
 				output.println(lower + " " + pid + " " + higher); 
+                output.flush();
  
 			}
             else if (input[0].equalsIgnoreCase("BATCH"))
             {
-				//batch will have either one file or two
-				// batch(input); 
 		        PrintStream out = System.out; 
 		
 		        try{ out = new PrintStream(new BufferedOutputStream(new FileOutputStream(input[2])));}
@@ -227,7 +234,7 @@ public class main implements RPCFunctions {
 
 	//fxn to update list of living nodes
 	public static void update_live(int pid, boolean alive){
-        System.out.println("Updating live nodes!");
+        System.err.println("Updating live nodes!");
 		ArrayList<Long> ids = new ArrayList<Long>(); 
 
         live_node_id_to_pid_lock.lock();
