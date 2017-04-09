@@ -176,10 +176,32 @@ public class main implements RPCFunctions {
             {
 				int pid = Executor.route(input[1]);
 				long id = IDS[pid-1]; 
-					
+							
 				int higher = Stabilizer.get_higher_entry(id); 
 				int lower = Stabilizer.get_lower_entry(id); 
-				output.println(lower + " " + pid + " " + higher); 
+			
+				int [] owners = {lower, pid, higher};  	
+				String check = null; 
+				boolean found = false; 
+				
+				for (int i = 0; i < 3; i ++){
+					try{
+						RPCFunctions r = rpc_connect.get_connection(owners[i]); 
+						check = r.get(input[1]); 
+						if (!check.equals("Not found")){
+							found  = true; 
+							break;
+						} 
+		
+					}catch(Exception ex){}
+				}
+			
+
+				if (found){
+					output.println(lower + " " + pid + " " + higher); 
+				}else{
+					output.println("No key found"); 
+				}
                 output.flush();
  
 			}
