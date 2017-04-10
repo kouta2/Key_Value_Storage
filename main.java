@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.HashMap; 
+import java.util.Hashtable; 
 import java.util.Map; 
 import java.util.Iterator;
 import java.util.Arrays;
@@ -17,13 +18,13 @@ public class main implements RPCFunctions {
 
 	//Array that holds the chord ids for each machine
 	static long [] IDS = {0L,429496729L,858993459L,1288490188L,1717986918L,2147483648L,2576980377L,3006477107L,3435973836L,3865470566L};
-    static HashMap<Long,Integer> ID_TO_INDEX; 
+    static Hashtable <Long,Integer> ID_TO_INDEX;
 
     static TreeMap<Long, Integer> LIVE_NODE_ID_TO_PID; // need locking
 	static boolean [] LIVE_NODES = {false,false,false,false,false,false,false,false,false,false}; // need locking
 	static long[] LIVE_IDS; // need locking
 	
-	static HashMap <String, String> KV; // need live_ids_locking
+	static Hashtable <String, String> KV; // need live_ids_locking
 	
     static int port_num = 2001;
     static ConnectToOtherRPCs rpc_connect;
@@ -300,7 +301,7 @@ public class main implements RPCFunctions {
 	//function to initialize map between index and large number
 	public static void init_map()
     {
-		ID_TO_INDEX = new HashMap<Long, Integer>();
+		ID_TO_INDEX = new Hashtable<Long, Integer>();
 		for (int i = 0; i < 10; i ++){
 			ID_TO_INDEX.put(IDS[i], i + 1); 			
 		}
@@ -310,7 +311,7 @@ public class main implements RPCFunctions {
 		init_map();
 		
 	    LIVE_NODE_ID_TO_PID = new TreeMap<Long, Integer>();
-        KV = new HashMap <String,String>();
+        KV = new Hashtable <String,String>();
 		try
         {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));

@@ -61,7 +61,7 @@ public class Stabilizer {
     {
         long[] IDS = main.IDS;
         int my_pid = main.PROCESS_NUM;
-        HashMap<String, String> kv = main.KV;
+        Hashtable<String, String> kv = main.KV;
 
         long node_id = IDS[pid - 1];
         int left = get_lower_entry(node_id);
