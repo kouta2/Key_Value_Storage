@@ -36,6 +36,7 @@ public class main implements RPCFunctions {
     static final Lock live_ids_lock = new ReentrantLock(); // lock for LIVE_IDS
     static final Lock live_node_id_to_pid_lock = new ReentrantLock(); // lock for LIVE_NODE_ID_TO_PID
     static final Lock replica_lock = new ReentrantLock(); // lock for replica integers
+    static final Lock kv_lock = new ReentrantLock(); // lock for KV
 
     public main() {}
 
@@ -58,6 +59,8 @@ public class main implements RPCFunctions {
 
 	public static void list_local(PrintStream output)
     {
+        kv_lock.lock();
+        try {
 		Iterator it = KV.entrySet().iterator();
     	while (it.hasNext()) 
         {
@@ -68,6 +71,8 @@ public class main implements RPCFunctions {
     	}		
         output.println("END LIST");
         output.flush();
+        }
+        finally { kv_lock.unlock();}
 	}
 
     public static void handle_one_line(String cmd, PrintStream output)

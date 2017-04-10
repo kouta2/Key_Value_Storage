@@ -61,6 +61,8 @@ public class Stabilizer {
     {
         long[] IDS = main.IDS;
         int my_pid = main.PROCESS_NUM;
+        main.kv_lock.lock();
+        try { 
         Hashtable<String, String> kv = main.KV;
 
         long node_id = IDS[pid - 1];
@@ -122,6 +124,8 @@ public class Stabilizer {
             }
             finally { main.replica_lock.unlock();}
         }
+        }
+        finally { main.kv_lock.unlock();}
     }
 
     private static boolean closer_left(int new_id, int old_id)
