@@ -1,5 +1,0 @@
-Make our datastructures thread safe
-
-BATCH
-
-fix sending replicas! Still doing my process left and right replica!!!

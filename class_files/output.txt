@@ -1,6 +1,0 @@
-SET OK
-SET OK
-Found: ARV
-2 3 4
-NAME
-END LIST
