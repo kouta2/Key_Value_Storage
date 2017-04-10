@@ -45,7 +45,11 @@ public class main implements RPCFunctions {
     public String get(String key)
     {
         // return found or not found in local machine and send it to proper person
-        String value = KV.get(key);
+        String value = null;
+        kv_lock.lock();
+        try{
+        value = KV.get(key); }
+        finally { kv_lock.unlock();}
 		if (value != null) return "Found: " + value;
 		return "Not found"; 
     }
@@ -53,7 +57,10 @@ public class main implements RPCFunctions {
     public String set(String key, String value)
     {
         // set/update key-value pair locally
-        KV.put(key, value);
+        kv_lock.lock();
+        try {
+        KV.put(key, value); }
+        finally { kv_lock.unlock();}
 		return "SET OK";
     }
 
