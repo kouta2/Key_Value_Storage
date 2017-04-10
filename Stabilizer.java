@@ -184,22 +184,7 @@ public class Stabilizer {
             }
         }
         finally { main.replica_lock.unlock();}
-        System.err.println("left: " + main.left_replica);
-        System.err.println("right: " + main.right_replica);
+        // System.err.println("left: " + main.left_replica);
+        // System.err.println("right: " + main.right_replica);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

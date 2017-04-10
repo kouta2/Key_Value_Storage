@@ -25,7 +25,7 @@ public class Executor extends Thread{
 			try{
 				md = MessageDigest.getInstance("SHA-256");
 			}catch (Exception ex){
-				System.err.println("No such algorithm!");
+				//System.err.println("No such algorithm!");
 			}
 			
 			md.update(key.getBytes());
@@ -38,12 +38,12 @@ public class Executor extends Thread{
         		sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
         	}	
 			long k = Long.parseLong(sb.toString(),16);
-			System.err.println("Key hashed to: " + k);
+			// System.err.println("Key hashed to: " + k);
 		//done, k is that number!
 
 		long found_id = binsearch(k); 
 		
-		System.err.println("ROUTED TO: " + found_id);
+		// System.err.println("ROUTED TO: " + found_id);
 		return (int)main.ID_TO_INDEX.get(found_id); 
 
 	}
@@ -87,7 +87,3 @@ public class Executor extends Thread{
 		return 0L;
 	}
 }
-
-
-
-

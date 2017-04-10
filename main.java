@@ -71,6 +71,8 @@ public class main implements RPCFunctions {
 
     public static void handle_one_line(String cmd, PrintStream output)
     {
+        if(cmd.length() == 0)
+            return;
         try
         {
             // find out which process handles this
@@ -85,7 +87,7 @@ public class main implements RPCFunctions {
             {
                 boolean done = false;
 				int pid = Executor.route(input[1]); 
-                System.err.println("PID: " + pid);
+                // System.err.println("PID: " + pid);
                 try 
                 {
 					RPCFunctions r = rpc_connect.get_connection(pid);
@@ -98,7 +100,7 @@ public class main implements RPCFunctions {
                 try 
                 {
 				    int lower_pid = Stabilizer.get_lower_entry(IDS[pid - 1]); // left_replica; // pid - 1 > 0 ? pid - 1 : LIVE_IDS.length; // need to recalculate
-                    System.err.println("LOWER_ID: " + lower_pid);
+                    /// System.err.println("LOWER_ID: " + lower_pid);
 					RPCFunctions r = rpc_connect.get_connection(lower_pid);
                     String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                     if(!done)
@@ -112,7 +114,7 @@ public class main implements RPCFunctions {
                 try 
                 {
 				    int higher_pid = Stabilizer.get_higher_entry(IDS[pid - 1]); // right_replica; // pid + 1 > LIVE_IDS.length ? 0 : pid + 1; // need to recalculate
-                    System.err.println("HIGHER_ID: " + higher_pid);
+                    // System.err.println("HIGHER_ID: " + higher_pid);
 					RPCFunctions r = rpc_connect.get_connection(higher_pid);
                     String result = r.set(input[1], String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
                     if(!done)
@@ -163,7 +165,10 @@ public class main implements RPCFunctions {
                 }
                 catch (Exception e) {}
                 if(!done)
-                    System.err.println("Not found");
+                {
+                    output.println("Not found");
+                    output.flush();
+                }
 			}
             else if (input[0].equalsIgnoreCase("LIST_LOCAL"))
             {
@@ -260,7 +265,7 @@ public class main implements RPCFunctions {
 	//fxn to update list of living nodes
 	public static void update_live(int pid, boolean alive)
     {
-        System.err.println("Updating live nodes!");
+        // System.err.println("Updating live nodes!");
 		ArrayList<Long> ids = new ArrayList<Long>(); 
 
         live_node_id_to_pid_lock.lock();
@@ -311,7 +316,7 @@ public class main implements RPCFunctions {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));
         }
         catch (Exception e) {}
-        System.err.println("My PROCESS NUM IS: " + PROCESS_NUM + " and my Node ID is: " + IDS[PROCESS_NUM - 1]);
+        // System.err.println("My PROCESS NUM IS: " + PROCESS_NUM + " and my Node ID is: " + IDS[PROCESS_NUM - 1]);
 		
 		LIVE_NODES[PROCESS_NUM - 1] = true;//make myself alive
         update_live(PROCESS_NUM, true); 
