@@ -90,7 +90,9 @@ public class Stabilizer {
                 while(it.hasNext())
                 {
                     Map.Entry pair = (Map.Entry)it.next();
-                    int owner = Executor.route((String)pair.getKey());
+                    String key = (String)pair.getKey();
+                    String value = (String)pair.getValue();
+                    int owner = Executor.route(key);
                     ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(main.port_num);
                     if(owner == my_pid)
                     {
@@ -98,13 +100,13 @@ public class Stabilizer {
                         try
                         {
                             RPCFunctions r = rpc_connect.get_connection(left_rep);
-                            r.set((String)pair.getKey(), (String)pair.getValue());
+                            r.set(key, value);
                         }
                         catch (Exception e) {}
                         try
                         {
                             RPCFunctions r = rpc_connect.get_connection(right_rep);
-                            r.set((String)pair.getKey(), (String)pair.getValue());
+                            r.set(key, value);
                         }
                         catch (Exception e) {}
                         main.kv_lock.lock();
@@ -115,7 +117,7 @@ public class Stabilizer {
                         try
                         {
                             RPCFunctions r = rpc_connect.get_connection(left_rep);
-                            r.set((String)pair.getKey(), (String)pair.getValue());
+                            r.set(key, value);
                         }
                         catch (Exception e) {}
                         main.kv_lock.lock();
@@ -126,7 +128,7 @@ public class Stabilizer {
                         try
                         {
                             RPCFunctions r = rpc_connect.get_connection(right_rep);
-                            r.set((String)pair.getKey(), (String)pair.getValue());
+                            r.set(key, value);
                         }
                         catch (Exception e) {}
                         main.kv_lock.lock();
