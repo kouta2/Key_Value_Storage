@@ -134,7 +134,7 @@ public class Stabilizer {
                         main.kv_lock.lock();
                     }
                     else
-                        kv.remove(pair.getKey());
+                        kv.remove(key);
                 }
             }
             finally 
