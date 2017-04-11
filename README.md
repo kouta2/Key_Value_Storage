@@ -4,7 +4,7 @@ Before compiling the code, create a folder called class_files inside the CS425MP
 To compile, run the following bash script from inside the CS425MP2 directory
 >> bash compile.sh
 
-Now, you need to start a rmi registry to enable rpc calls. This command only needs to be executed once on a machine and needs to be ran inside the class_files directory.
+Now, you need to start a rmi registry to enable rpc calls. This command only needs to be executed once on a machine and needs to be ran inside the class_files directory. The rmi registry needs to be running while you run our main program.
 >> cd class_files/
 >> rmiregistry 2001 &
 
