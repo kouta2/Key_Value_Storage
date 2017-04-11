@@ -14,6 +14,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.TreeMap; 
 import java.io.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class main implements RPCFunctions {
 
 	//Array that holds the chord ids for each machine
@@ -24,7 +26,7 @@ public class main implements RPCFunctions {
 	static boolean [] LIVE_NODES = {false,false,false,false,false,false,false,false,false,false}; // need locking
 	static long[] LIVE_IDS; // need locking
 	
-	static Hashtable <String, String> KV; // need live_ids_locking
+	static ConcurrentHashMap <String, String> KV; // need live_ids_locking
 	
     static int port_num = 2001;
     static ConnectToOtherRPCs rpc_connect;
@@ -331,7 +333,7 @@ public class main implements RPCFunctions {
 		init_map();
 		
 	    LIVE_NODE_ID_TO_PID = new TreeMap<Long, Integer>();
-        KV = new Hashtable <String,String>();
+        KV = new ConcurrentHashMap <String,String>();
 		try
         {
             PROCESS_NUM = Integer.parseInt(InetAddress.getLocalHost().getHostName().substring(15, 17));

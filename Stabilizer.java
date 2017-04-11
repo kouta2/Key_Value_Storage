@@ -1,5 +1,6 @@
 import java.util.*; 
 import java.lang.Math.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Stabilizer {
 
@@ -85,7 +86,7 @@ public class Stabilizer {
             {
                 int left_rep = main.left_replica;
                 int right_rep = main.right_replica;
-                Hashtable<String, String> kv = main.KV;
+                ConcurrentHashMap<String, String> kv = main.KV;
                 Iterator it = kv.entrySet().iterator();
                 while(it.hasNext())
                 {
@@ -137,7 +138,7 @@ public class Stabilizer {
                         kv.remove(key);
                 }
             }
-            catch (Exception e) {}
+            // catch (Exception e) {}
             finally 
             { 
                 main.kv_lock.unlock();
