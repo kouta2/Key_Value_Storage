@@ -38,6 +38,8 @@ public class main implements RPCFunctions {
     static final Lock replica_lock = new ReentrantLock(); // lock for replica integers
     static final Lock kv_lock = new ReentrantLock(); // lock for KV
 
+    static final Lock live_nodes_lock = new ReentrantLock(); // lock for LIVE_NODES
+
     public main() {}
 
     // implement header functions in here for RPC
@@ -66,22 +68,6 @@ public class main implements RPCFunctions {
 
 	public static void list_local(PrintStream output)
     {
-        /*
-        kv_lock.lock();
-        try {
-		Iterator it = KV.entrySet().iterator();
-    	while (it.hasNext()) 
-        {
-        	Map.Entry pair = (Map.Entry)it.next();
-       		output.println(pair.getKey());
-            output.flush();
-       		//it.remove(); // avoids a ConcurrentModificationException
-    	}		
-        output.println("END LIST");
-        output.flush();
-        }
-        finally { kv_lock.unlock();}
-        */
         kv_lock.lock();
         try
         {
@@ -280,13 +266,17 @@ public class main implements RPCFunctions {
 
     public void notify_failure(int failed_pid)
     {
-	    LIVE_NODES[failed_pid - 1] = false;
+        live_nodes_lock.lock();
+	    try { LIVE_NODES[failed_pid - 1] = false;}
+        finally { live_nodes_lock.unlock();}
 		update_live(failed_pid, false); 
     }
 
     public void notify_connection(int connected_pid)
     {
-        LIVE_NODES[connected_pid - 1] = true;
+        live_nodes_lock.lock();
+        try { LIVE_NODES[connected_pid - 1] = true;}
+        finally { live_nodes_lock.unlock();}
     	update_live(connected_pid, true); 
 	}
 
@@ -299,6 +289,7 @@ public class main implements RPCFunctions {
 
         live_node_id_to_pid_lock.lock();
         live_ids_lock.lock();
+        live_nodes_lock.lock();
         try
         {
             LIVE_NODE_ID_TO_PID = new TreeMap<Long, Integer>();
@@ -317,6 +308,7 @@ public class main implements RPCFunctions {
         }
         finally 
         { 
+            live_nodes_lock.unlock();
             live_ids_lock.unlock();
             live_node_id_to_pid_lock.unlock();
         }

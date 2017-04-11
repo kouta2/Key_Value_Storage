@@ -49,7 +49,9 @@ public class FailureDetector extends Thread{
                         {
                             // System.err.println("Process id: " + i + " connected");
 	                        alive[i - 1] = true;
-                            main.LIVE_NODES[i-1] = true; 
+                            main.live_nodes_lock.lock();
+                            try { main.LIVE_NODES[i-1] = true;} 
+                            finally { main.live_nodes_lock.unlock();}
 							main.update_live(i, true); 
 							for(int j = 1; j < 11; j++)
                                 if(j != pid && j != i)
@@ -62,7 +64,9 @@ public class FailureDetector extends Thread{
                         {
                             // System.err.println("Process id: " + i + " failed");
                             alive[i - 1] = false;
-                            main.LIVE_NODES[i-1] = false; 
+                            main.live_nodes_lock.lock();
+                            try { main.LIVE_NODES[i-1] = false;} 
+                            finally { main.live_nodes_lock.unlock();}
 							main.update_live(i, false); 
 							for(int j = 1; j < 11; j++)
                                 if(j != pid && j != i)
