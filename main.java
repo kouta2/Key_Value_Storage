@@ -66,6 +66,7 @@ public class main implements RPCFunctions {
 
 	public static void list_local(PrintStream output)
     {
+        /*
         kv_lock.lock();
         try {
 		Iterator it = KV.entrySet().iterator();
@@ -78,6 +79,21 @@ public class main implements RPCFunctions {
     	}		
         output.println("END LIST");
         output.flush();
+        }
+        finally { kv_lock.unlock();}
+        */
+        kv_lock.lock();
+        try
+        {
+            String[] keys = KV.keySet().toArray(new String[KV.size()]);
+            Arrays.sort(keys);
+            for(int i = 0; i < keys.length; i++)
+            {
+                output.println(keys[i]);
+                output.flush();
+            }
+            output.println("END LIST");
+            output.flush();
         }
         finally { kv_lock.unlock();}
 	}
