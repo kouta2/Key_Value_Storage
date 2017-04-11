@@ -69,9 +69,6 @@ public class Stabilizer {
     {
         long[] IDS = main.IDS;
         int my_pid = main.PROCESS_NUM;
-        main.kv_lock.lock();
-        try { 
-        Hashtable<String, String> kv = main.KV;
 
         long node_id = IDS[pid - 1];
         int left = get_lower_entry(node_id);
@@ -83,10 +80,12 @@ public class Stabilizer {
         if(my_pid == left || my_pid == right || my_pid == right_right)
         {
             main.replica_lock.lock();
+            main.kv_lock.lock();
             try
             {
                 int left_rep = main.left_replica;
                 int right_rep = main.right_replica;
+                Hashtable<String, String> kv = main.KV;
                 Iterator it = kv.entrySet().iterator();
                 while(it.hasNext())
                 {
@@ -95,6 +94,7 @@ public class Stabilizer {
                     ConnectToOtherRPCs rpc_connect = new ConnectToOtherRPCs(main.port_num);
                     if(owner == my_pid)
                     {
+                        main.kv_lock.unlock();
                         try
                         {
                             RPCFunctions r = rpc_connect.get_connection(left_rep);
@@ -107,33 +107,40 @@ public class Stabilizer {
                             r.set((String)pair.getKey(), (String)pair.getValue());
                         }
                         catch (Exception e) {}
+                        main.kv_lock.lock();
                     }
                     else if(owner == left_rep)
                     {
+                        main.kv_lock.unlock();
                         try
                         {
                             RPCFunctions r = rpc_connect.get_connection(left_rep);
                             r.set((String)pair.getKey(), (String)pair.getValue());
                         }
                         catch (Exception e) {}
+                        main.kv_lock.lock();
                     }
                     else if(owner == right_rep)
                     {
+                        main.kv_lock.unlock();
                         try
                         {
                             RPCFunctions r = rpc_connect.get_connection(right_rep);
                             r.set((String)pair.getKey(), (String)pair.getValue());
                         }
                         catch (Exception e) {}
+                        main.kv_lock.lock();
                     }
                     else
                         kv.remove(pair.getKey());
                 }
             }
-            finally { main.replica_lock.unlock();}
+            finally 
+            { 
+                main.kv_lock.unlock();
+                main.replica_lock.unlock();
+            }
         }
-        }
-        finally { main.kv_lock.unlock();}
     }
 
     private static boolean closer_left(int new_id, int old_id)

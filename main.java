@@ -95,7 +95,7 @@ public class main implements RPCFunctions {
             // RPCFunction r = rpc_connect.getConnection(PROCESS_NUM);
             //TODO: handle replication	
             	
-            // we are guaranteed that at least one of these try catch blive_ids_locks will execute its try completely 
+            // we are guaranteed that at least one of these try catch live_ids_locks will execute its try completely 
 
 			String input []  = cmd.split(" ");	
 			if (input[0].equalsIgnoreCase("SET"))
