@@ -137,6 +137,7 @@ public class Stabilizer {
                         kv.remove(key);
                 }
             }
+            catch (Exception e) {}
             finally 
             { 
                 main.kv_lock.unlock();
