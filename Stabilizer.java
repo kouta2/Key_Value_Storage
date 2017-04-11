@@ -5,20 +5,20 @@ public class Stabilizer {
 
     public static int get_lower_entry(long node_id)
     {
+        main.live_node_id_to_pid_lock.lock();
+        main.live_ids_lock.lock();
+        
         TreeMap<Long, Integer> node_id_to_pid = main.LIVE_NODE_ID_TO_PID;
         long[] live_ids = main.LIVE_IDS;
         int pid = main.PROCESS_NUM;
 
-        main.live_node_id_to_pid_lock.lock();
         try
         {
             Map.Entry<Long, Integer> pair = node_id_to_pid.lowerEntry(node_id);
             if(pair == null)
             {
-                main.live_ids_lock.lock();
                 Integer val = null;
-                try{ val = node_id_to_pid.get(live_ids[live_ids.length - 1]);}
-                finally { main.live_ids_lock.unlock();}
+                val = node_id_to_pid.get(live_ids[live_ids.length - 1]);
                 if(val == main.ID_TO_INDEX.get(node_id))
                     return -1;
                 else
@@ -27,25 +27,29 @@ public class Stabilizer {
             else
                 return pair.getValue();
         }
-        finally { main.live_node_id_to_pid_lock.unlock();}
+        finally 
+        { 
+            main.live_ids_lock.unlock();
+            main.live_node_id_to_pid_lock.unlock();
+        }
     }
 
     public static int get_higher_entry(long node_id)
     {
+        main.live_node_id_to_pid_lock.lock();
+        main.live_ids_lock.lock();
+
         TreeMap<Long, Integer> node_id_to_pid = main.LIVE_NODE_ID_TO_PID;
         long[] live_ids = main.LIVE_IDS;
         int pid = main.PROCESS_NUM;
 
-        main.live_node_id_to_pid_lock.lock();
         try
         {
             Map.Entry<Long, Integer> pair = node_id_to_pid.higherEntry(node_id);
             if(pair == null)
             {
-                main.live_ids_lock.lock();
                 Integer val = null;
-                try { val = node_id_to_pid.get(live_ids[0]);}
-                finally { main.live_ids_lock.unlock();}
+                val = node_id_to_pid.get(live_ids[0]);
                 if(val == main.ID_TO_INDEX.get(node_id))
                     return -1;
                 else
@@ -54,7 +58,11 @@ public class Stabilizer {
             else
                 return pair.getValue();
         }
-        finally { main.live_node_id_to_pid_lock.unlock();}
+        finally 
+        { 
+            main.live_ids_lock.unlock();
+            main.live_node_id_to_pid_lock.unlock();
+        }
     }
 
     public static void rebalance(int pid, boolean alive)

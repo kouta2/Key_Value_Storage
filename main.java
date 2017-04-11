@@ -298,6 +298,7 @@ public class main implements RPCFunctions {
 		ArrayList<Long> ids = new ArrayList<Long>(); 
 
         live_node_id_to_pid_lock.lock();
+        live_ids_lock.lock();
         try
         {
             LIVE_NODE_ID_TO_PID = new TreeMap<Long, Integer>();
@@ -307,19 +308,18 @@ public class main implements RPCFunctions {
                     LIVE_NODE_ID_TO_PID.put(IDS[i], i + 1);
 			    }
 		    }
-        }
-        finally { live_node_id_to_pid_lock.unlock();}
 
-        live_ids_lock.lock();
-        try
-        {
 		    LIVE_IDS = new long[ids.size()]; // this is not thread safe
 		
 		    for (int i = 0; i < ids.size();i ++){
 			    LIVE_IDS[i] = ids.get(i); 
 		    }
         }
-        finally { live_ids_lock.unlock();}
+        finally 
+        { 
+            live_ids_lock.unlock();
+            live_node_id_to_pid_lock.unlock();
+        }
 
         Stabilizer.check_to_update_left_and_right_replicas(pid, alive);
         Stabilizer.rebalance(pid, alive);
